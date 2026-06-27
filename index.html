@@ -1,881 +1,1172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Vital">
-<meta name="theme-color" content="#0c0b10">
-<title>Vital</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>VITAL — Body &amp; Spirit OS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --void:#0c0b10; --ink:#15131c; --deep:#1d1a27; --raised:#272231;
-    --border:#302a3c; --borderHi:#433b54; --muted:#6e6880; --text:#b6b0c6;
-    --textHi:#ddd7ea; --white:#f5f2fb;
-    --iron:#8a93a0;
-    --red:#d14836; --redDim:#3a1d18;
-    --blue:#3d7fb8; --blueDim:#16242f;
-    --green:#3fa55f; --greenDim:#16271a; --greenBright:#5ed47e;
-    --violet:#9b7dd4; --violetDim:#231d33; --violetBright:#b89ae8;
-    --gold:#d4a84a; --goldDim:#2a2410; --goldBright:#f0c860;
-    --ember:#d98c4a; --emberDim:#2e1d10;
-    --teal:#46b3a8; --tealDim:#122926;
-    --rose:#cf6f8f; --roseDim:#2e1620;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  html{scroll-behavior:smooth;}
-  body{
-    background:var(--void); color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-    font-size:16px; line-height:1.5; min-height:100vh; overflow-x:hidden;
-    -webkit-font-smoothing:antialiased;
-  }
-  ::-webkit-scrollbar{width:0;display:none;}
-
-  .top{
-    padding:calc(13px + env(safe-area-inset-top)) 18px 11px;
-    background:linear-gradient(180deg,var(--ink),var(--void));
-    border-bottom:1px solid var(--border); position:sticky; top:0; z-index:30;
-    display:flex; align-items:center; justify-content:space-between;
-  }
-  .top h1{font-size:19px;font-weight:800;letter-spacing:1.5px;color:var(--white);display:flex;align-items:center;gap:7px;text-transform:uppercase;}
-  .top h1 .mark{color:var(--teal);}
-  .icon-btn{background:var(--raised);border:1px solid var(--border);color:var(--text);width:38px;height:38px;border-radius:10px;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-  .icon-btn:active{background:var(--deep);}
-
-  .tabbar{display:flex;background:var(--ink);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:20;}
-  .tabbar button{flex:1;background:none;border:none;color:var(--muted);padding:10px 4px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;border-bottom:2.5px solid transparent;display:flex;flex-direction:column;align-items:center;gap:3px;}
-  .tabbar button .ic{font-size:18px;}
-  .tabbar button.on{color:var(--teal);border-bottom-color:var(--teal);}
-
-  main{max-width:680px;margin:0 auto;padding:16px 14px 110px;}
-  .fade{animation:f .35s ease;}
-  @keyframes f{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
-
-  .sec-title{font-size:23px;font-weight:800;color:var(--white);letter-spacing:.3px;margin:2px 0 2px;}
-  .sec-sub{font-size:13px;color:var(--muted);margin-bottom:16px;}
-  .back-link{background:none;border:none;color:var(--teal);font-size:14px;font-weight:700;cursor:pointer;padding:8px 0;display:flex;align-items:center;gap:6px;margin-bottom:4px;}
-
-  .card{background:var(--ink);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:14px;position:relative;overflow:hidden;}
-  .card .accent{position:absolute;left:0;top:0;bottom:0;width:4px;}
-
-  .btn{border:none;border-radius:11px;padding:13px 18px;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.3px;font-family:inherit;}
-  .btn:active{transform:scale(.98);}
-  .btn-teal{background:linear-gradient(135deg,#3a9b91,var(--teal));color:#06201d;}
-  .btn-ember{background:linear-gradient(135deg,#c87a3a,var(--ember));color:#1a0f06;}
-  .btn-green{background:linear-gradient(135deg,#2e8c4a,var(--green));color:#06210f;}
-  .btn-ghost{background:var(--raised);border:1px solid var(--border);color:var(--text);}
-  .btn-full{width:100%;}
-  .btn-add{background:var(--deep);border:1px dashed var(--borderHi);color:var(--iron);width:100%;padding:11px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;}
-
-  /* tappable list cards */
-  .pick{border-radius:13px;padding:16px;cursor:pointer;border:1.5px solid var(--border);background:var(--ink);position:relative;overflow:hidden;margin-bottom:10px;transition:transform .1s;}
-  .pick:active{transform:scale(.985);}
-  .pick .bar{position:absolute;left:0;top:0;bottom:0;width:4px;}
-  .pick .nm{font-size:16px;font-weight:800;color:var(--white);letter-spacing:.3px;}
-  .pick .meta{font-size:12px;color:var(--muted);margin-top:3px;}
-  .pick .emoji{font-size:22px;margin-right:4px;}
-
-  .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
-
-  /* exercise/log */
-  .ex-card{background:var(--ink);border:1px solid var(--border);border-radius:14px;margin-bottom:11px;overflow:hidden;}
-  .ex-head{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:10px;}
-  .ex-head .nm{font-size:15.5px;font-weight:700;color:var(--white);line-height:1.25;}
-  .ex-head .warn{color:var(--ember);}
-  .ex-head .chev{color:var(--muted);font-size:15px;flex-shrink:0;transition:transform .2s;}
-  .ex-card.open .chev{transform:rotate(90deg);}
-  .last-pill{display:inline-flex;align-items:center;gap:5px;background:var(--violetDim);border:1px solid var(--violet);color:var(--violetBright);font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;margin-top:6px;}
-  .last-pill.none{background:var(--deep);border-color:var(--border);color:var(--muted);}
-  .ex-body{display:none;padding:0 16px 16px;border-top:1px solid var(--border);}
-  .ex-card.open .ex-body{display:block;}
-  .ex-target{font-size:12px;color:var(--gold);margin:10px 0 4px;font-weight:600;}
-  .ex-note{font-size:12px;color:var(--muted);font-style:italic;line-height:1.5;margin-bottom:10px;}
-  .ex-swap{font-size:11px;color:var(--ember);background:var(--goldDim);border-radius:8px;padding:8px 10px;margin-top:8px;line-height:1.4;}
-
-  .set-row{display:grid;grid-template-columns:38px 1fr 1fr 50px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);}
-  .set-row.head span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:700;text-align:center;}
-  .set-row.head span:first-child{text-align:left;}
-  .set-label{font-size:13px;font-weight:700;color:var(--iron);}
-  .set-input{width:100%;background:var(--void);border:1.5px solid var(--border);border-radius:9px;padding:11px 4px;color:var(--white);font-size:17px;text-align:center;outline:none;font-weight:600;-moz-appearance:textfield;}
-  .set-input::-webkit-outer-spin-button,.set-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
-  .set-input:focus{border-color:var(--teal);background:#000;}
-  .vs{font-size:17px;text-align:center;font-weight:800;}
-  .vs.up{color:var(--greenBright);}.vs.down{color:var(--red);}.vs.same{color:var(--muted);}
-
-  /* stats */
-  .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;}
-  .stat{background:var(--ink);border:1px solid var(--border);border-radius:12px;padding:15px;text-align:center;}
-  .stat .v{font-size:26px;font-weight:800;line-height:1;}
-  .stat .l{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:6px;font-weight:700;}
-  .lift-row{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;background:var(--ink);border:1px solid var(--border);border-radius:11px;margin-bottom:8px;}
-  .lift-row .nm{font-size:14px;color:var(--textHi);font-weight:600;}
-  .lift-row .v{font-size:16px;font-weight:800;color:var(--greenBright);}
-  .lift-row .v .u{font-size:11px;color:var(--muted);font-weight:600;}
-
-  /* progress ring / bars */
-  .ring-wrap{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;}
-  .macro-bar{margin-bottom:12px;}
-  .macro-bar .top-l{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;}
-  .macro-bar .top-l .nm{color:var(--textHi);font-weight:600;}
-  .macro-bar .top-l .v{color:var(--muted);font-weight:600;}
-  .macro-bar .track{height:10px;background:var(--deep);border-radius:6px;overflow:hidden;}
-  .macro-bar .fill{height:100%;border-radius:6px;transition:width .4s;}
-
-  /* checklist */
-  .check-row{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--ink);border:1px solid var(--border);border-radius:12px;margin-bottom:9px;cursor:pointer;}
-  .check-row:active{background:var(--deep);}
-  .check-box{width:26px;height:26px;border-radius:8px;border:2px solid var(--borderHi);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .15s;}
-  .check-row.done .check-box{background:var(--teal);border-color:var(--teal);color:#06201d;}
-  .check-row.done .ct{color:var(--muted);text-decoration:line-through;}
-  .check-row .ct{font-size:14.5px;color:var(--textHi);font-weight:600;flex:1;}
-  .check-row .emoji{font-size:20px;}
-
-  .empty{text-align:center;padding:40px 20px;color:var(--muted);}
-  .empty .big{font-size:40px;margin-bottom:12px;opacity:.5;}
-
-  /* modal */
-  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);z-index:100;display:flex;align-items:flex-end;justify-content:center;animation:f .2s;}
-  .sheet{background:var(--ink);border-top:1px solid var(--borderHi);border-radius:20px 20px 0 0;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;padding:20px 18px calc(28px + env(safe-area-inset-bottom));}
-  .sheet h2{font-size:20px;color:var(--white);font-weight:800;margin-bottom:6px;}
-  .sheet p{font-size:13px;color:var(--text);line-height:1.6;margin-bottom:12px;}
-  .grab{width:40px;height:4px;background:var(--borderHi);border-radius:2px;margin:0 auto 16px;}
-  .field-l{font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin:12px 0 6px;display:block;}
-  textarea,input[type=text],input[type=number],select{width:100%;background:var(--void);border:1.5px solid var(--border);border-radius:10px;padding:12px;color:var(--white);font-size:15px;font-family:inherit;outline:none;}
-  textarea:focus,input:focus,select:focus{border-color:var(--teal);}
-  input[type=number]{-moz-appearance:textfield;}
-  input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
-
-  .toast{position:fixed;bottom:calc(90px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:var(--teal);color:#06201d;padding:11px 22px;border-radius:24px;font-size:13px;font-weight:800;z-index:200;animation:tst 2.2s ease forwards;pointer-events:none;white-space:nowrap;}
-  @keyframes tst{0%{opacity:0;transform:translate(-50%,10px);}12%{opacity:1;transform:translate(-50%,0);}85%{opacity:1;}100%{opacity:0;transform:translate(-50%,-8px);}}
-
-  .pill-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;}
-  .pill{padding:7px 13px;border-radius:20px;background:var(--deep);border:1px solid var(--border);font-size:13px;color:var(--text);cursor:pointer;font-weight:600;}
-  .pill.on{background:var(--tealDim);border-color:var(--teal);color:var(--teal);}
-
-  .tag{display:inline-block;font-size:10px;font-weight:800;padding:2px 8px;border-radius:10px;letter-spacing:.5px;text-transform:uppercase;}
-  .divider{height:1px;background:var(--border);margin:16px 0;}
+:root{
+  --night:#0A0E0C;--night-2:#10160F;--panel:#141C16;--panel-2:#1C271E;--line:#293A2E;
+  --gold:#C2A04F;--gold-soft:#E2C681;--ember:#BC5A45;--ember-soft:#DC8970;
+  --violet:#54B08C;--violet-soft:#8CD8B6;--sage:#7FA68C;--parch:#ECE6D6;
+  --text:#E2EAE2;--text-dim:#94A89B;--text-faint:#637268;--ok:#54B08C;--warn:#C9974B;
+  --radius:14px;--shadow:0 10px 30px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--night);color:var(--text);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+body{overscroll-behavior-y:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit}
+::selection{background:var(--gold);color:var(--night)}
+::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
+.app{max-width:760px;margin:0 auto;min-height:100vh;position:relative;padding-bottom:84px;background:radial-gradient(1200px 600px at 50% -10%, rgba(84,176,140,.12), transparent 60%),radial-gradient(800px 500px at 90% 10%, rgba(194,160,79,.06), transparent 55%),var(--night)}
+.hdr{position:sticky;top:0;z-index:40;backdrop-filter:blur(14px);background:linear-gradient(to bottom, rgba(10,14,12,.94), rgba(10,14,12,.72));border-bottom:1px solid var(--line);padding:14px 18px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:baseline;gap:10px}
+.brand h1{font-family:'Cinzel',serif;font-weight:700;font-size:20px;letter-spacing:4px;margin:0;color:var(--gold);text-shadow:0 0 18px rgba(194,160,79,.25)}
+.brand .sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--text-faint);letter-spacing:.3px}
+.hdr .streak{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--violet-soft);background:rgba(84,176,140,.08);border:1px solid rgba(84,176,140,.24);padding:5px 10px;border-radius:999px;font-weight:600}
+.page{padding:18px 16px 8px;animation:rise .35s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.eyebrow{font-family:'Cinzel',serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text-faint);margin:0 0 4px}
+.h-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;margin:0 0 2px;line-height:1.05}
+.h-sub{color:var(--text-dim);font-size:14px;margin:2px 0 18px;max-width:56ch}
+.card{background:linear-gradient(180deg,var(--panel),var(--night-2));border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card.flat{box-shadow:none}
+.row{display:flex;gap:12px}.row.wrap{flex-wrap:wrap}
+.between{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:480px){.grid3{grid-template-columns:repeat(2,1fr)}}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;letter-spacing:.4px;padding:4px 9px;border-radius:999px;border:1px solid var(--line);color:var(--text-dim);background:rgba(255,255,255,.02);text-transform:uppercase}
+.pill.brass{color:var(--gold-soft);border-color:rgba(194,160,79,.3);background:rgba(194,160,79,.07)}
+.pill.ox{color:var(--ember-soft);border-color:rgba(188,90,69,.34);background:rgba(188,90,69,.08)}
+.pill.verd{color:var(--violet-soft);border-color:rgba(84,176,140,.34);background:rgba(84,176,140,.08)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 16px;border-radius:11px;font-weight:600;font-size:14px;background:var(--panel-2);border:1px solid var(--line);color:var(--text);transition:.15s}
+.btn:hover{border-color:var(--gold);transform:translateY(-1px)}.btn:active{transform:translateY(0)}
+.btn.gold{background:linear-gradient(180deg,var(--gold),#9E7F38);color:#1B1404;border-color:transparent;box-shadow:0 6px 18px rgba(194,160,79,.28)}
+.btn.gold:hover{filter:brightness(1.06)}
+.btn.verd{background:linear-gradient(180deg,var(--violet),#3C8E6E);color:#04140D;border-color:transparent;box-shadow:0 6px 18px rgba(84,176,140,.26)}
+.btn.ghost{background:transparent}
+.btn.sm{padding:7px 11px;font-size:12.5px;border-radius:9px}
+.btn.xs{padding:5px 9px;font-size:11.5px;border-radius:8px}
+.btn.full{width:100%}
+.btn.danger:hover{border-color:#C9554B;color:#E08a82}
+.lbl{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-faint);font-weight:600;margin-bottom:6px;display:block}
+.in{width:100%;background:var(--night);border:1px solid var(--line);border-radius:10px;padding:11px 12px;color:var(--text);font-size:15px;outline:none;transition:.15s}
+.in:focus{border-color:var(--gold)}
+textarea.in{resize:vertical;min-height:90px;line-height:1.55}
+.in.mini{padding:7px 9px;font-size:13px;border-radius:8px}
+select.in{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--text-dim) 50%),linear-gradient(135deg,var(--text-dim) 50%,transparent 50%);background-position:calc(100% - 18px) 19px,calc(100% - 13px) 19px;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+select.in.mini{background-position:calc(100% - 14px) 14px,calc(100% - 10px) 14px}
+.kpi{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:34px;line-height:1;color:var(--gold-soft)}
+.kpi.ox{color:var(--ember-soft)}.kpi.verd{color:var(--violet-soft)}
+.divider{height:1px;background:var(--line);margin:14px 0;border:0}
+.muted{color:var(--text-dim)}.faint{color:var(--text-faint)}
+.serif{font-family:'Cormorant Garamond',serif}.center{text-align:center}
+.card[data-acc="ox"]{border-left:3px solid var(--ember)}
+.card[data-acc="brass"]{border-left:3px solid var(--gold)}
+.card[data-acc="verd"]{border-left:3px solid var(--violet)}
+.li{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.li:last-child{border-bottom:0}.li .t{font-weight:600;font-size:15px}.li .d{font-size:12.5px;color:var(--text-dim);margin-top:2px}
+.seg{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;scrollbar-width:none}
+.seg::-webkit-scrollbar{display:none}
+.seg button{white-space:nowrap;padding:8px 13px;border-radius:999px;font-size:13px;font-weight:600;border:1px solid var(--line);color:var(--text-dim);background:rgba(255,255,255,.02)}
+.seg button.on{color:var(--night);background:var(--gold);border-color:transparent}
+.seg.verd button.on{background:var(--violet)}
+.seg.ox button.on{background:var(--ember);color:#fff}
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:50;background:linear-gradient(to top,rgba(10,14,12,.98),rgba(16,22,15,.94));backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:8px 4px calc(8px + env(safe-area-inset-bottom))}
+.navwrap{max-width:760px;margin:0 auto;display:flex;justify-content:space-around}
+.nav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 2px;color:var(--text-faint);font-size:9.5px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;transition:.15s}
+.nav a .ic{font-size:18px;line-height:1}
+.nav a.on{color:var(--gold)}.nav a.on .ic{filter:drop-shadow(0 0 8px rgba(194,160,79,.5))}
+.scrim{position:fixed;inset:0;z-index:60;background:rgba(5,8,6,.72);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center;animation:fade .2s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.sheet{width:100%;max-width:760px;max-height:90vh;overflow-y:auto;background:var(--night-2);border:1px solid var(--line);border-bottom:0;border-radius:18px 18px 0 0;padding:18px 16px 30px;animation:slideup .28s cubic-bezier(.2,.7,.2,1) both}
+@keyframes slideup{from{transform:translateY(40px);opacity:.6}to{transform:none;opacity:1}}
+.sheet .grab{width:38px;height:4px;border-radius:4px;background:var(--line);margin:0 auto 14px}
+.pillar{position:relative;padding:20px 16px;border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(180deg,rgba(84,176,140,.10),rgba(16,22,15,.4));overflow:hidden}
+.pillar:before{content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;transform:translateX(-50%);background:linear-gradient(to bottom,transparent,var(--gold),var(--violet),var(--ember),transparent);opacity:.6}
+.pillar .node{position:relative;text-align:center;padding:9px 0;z-index:1}
+.pillar .node .dot{width:10px;height:10px;border-radius:50%;background:var(--gold);margin:0 auto 6px;box-shadow:0 0 12px var(--gold)}
+.pillar .node.mid .dot{background:var(--violet);box-shadow:0 0 12px var(--violet)}
+.pillar .node.below .dot{background:var(--ember);box-shadow:0 0 12px var(--ember)}
+.pillar .node .lab{font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;color:var(--text-dim)}
+.pillar .node .val{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--text)}
+.quote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;line-height:1.4;color:var(--parch)}
+.quote .by{display:block;font-style:normal;font-size:12px;letter-spacing:1px;color:var(--text-faint);margin-top:8px;text-transform:uppercase}
+.tag{font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:2px 7px;border-radius:6px}
+.tag.tr,.tag.fu,.tag.bh{color:var(--ember-soft);background:rgba(188,90,69,.13)}
+.tag.pr{color:var(--gold-soft);background:rgba(194,160,79,.13)}
+.tag.mi,.tag.qz{color:var(--violet-soft);background:rgba(84,176,140,.13)}
+.tag.fr{color:var(--text-dim);background:rgba(255,255,255,.05)}
+.step{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.step:last-child{border:0}
+.step .n{flex:none;width:24px;height:24px;border-radius:50%;border:1px solid var(--gold);color:var(--gold);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.step .x{font-size:14px;line-height:1.55;color:var(--text)}
+.bar{height:9px;border-radius:8px;background:var(--night);overflow:hidden;border:1px solid var(--line)}
+.bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--ember),var(--gold));transition:width .4s}
+.bar.verd > i{background:linear-gradient(90deg,var(--violet),var(--gold))}
+.empty{text-align:center;padding:36px 20px;color:var(--text-faint)}.empty .big{font-size:30px;margin-bottom:8px;opacity:.5}
+.opt{display:block;width:100%;text-align:left;padding:13px 14px;border:1px solid var(--line);border-radius:11px;margin-bottom:9px;font-size:14.5px;transition:.15s;background:rgba(255,255,255,.015)}
+.opt:hover{border-color:var(--gold)}
+.opt.correct{border-color:var(--ok);background:rgba(84,176,140,.13);color:#cdeadc}
+.opt.wrong{border-color:#C9554B;background:rgba(201,85,75,.1);color:#e6b6b0}
+.flash{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);z-index:80;background:var(--gold);color:#1B1404;font-weight:700;font-size:13px;padding:10px 18px;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.5);animation:flash 2.2s ease both}
+@keyframes flash{0%{opacity:0;transform:translate(-50%,10px)}12%,80%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
+.loading{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.loading h1{font-family:'Cinzel';letter-spacing:6px;color:var(--gold);font-size:22px}
+.spin{width:30px;height:30px;border:2px solid var(--line);border-top-color:var(--gold);border-radius:50%;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.macro{display:flex;gap:8px;font-size:11px;color:var(--text-faint);margin-top:3px}.macro b{color:var(--text-dim)}
+.note{background:rgba(194,160,79,.07);border:1px solid rgba(194,160,79,.22);border-radius:12px;padding:12px 14px;margin-top:12px}
+.note.verd{background:rgba(84,176,140,.07);border-color:rgba(84,176,140,.22)}
+.note.warn{background:rgba(201,151,75,.08);border-color:rgba(201,151,75,.28)}
+.xbtn{flex:none;width:26px;height:26px;border-radius:8px;border:1px solid var(--line);font-weight:700;color:var(--ember-soft)}
 </style>
 </head>
 <body>
-<div id="app"></div>
-
-<script>
-// ============================================================
-// TRAINING DATA — your split (default) + library
-// Each split: {id, name, emoji, color, desc, tag, days:{DAYNAME:[exercises]}}
-// exercise: {n, sets, target, note, sh, swap}
-// ============================================================
-const YOUR_SPLIT = {
-  id:"hybrid", name:"Hybrid PPL + Upper/Lower", emoji:"⚒", color:"var(--ember)",
-  tag:"YOUR SPLIT", desc:"Push/Pull/Legs + Upper Strength + Pump. Planche work, weighted calisthenics, shoulder-aware.",
-  days:{
-    PUSH:[
-      {n:"Planche Lean / Tuck Hold",sets:5,target:"10 sec",note:"Wrists protracted, body rigid. Log seconds as reps.",sh:true,swap:"Shoulder-safe: pseudo-planche on forearms"},
-      {n:"Pseudo Planche Push-Up",sets:4,target:"8-10",note:"3s down. Planche pushing strength.",sh:true,swap:"Shoulder-safe: incline push-up, hands low"},
-      {n:"L-Sit Hold",sets:3,target:"Max sec",note:"Core + hip-flexor base. Log seconds.",sh:false,swap:"Easier: tuck L-sit"},
-      {n:"Incline DB Press",sets:5,target:"6-10",note:"Double progression, 3s eccentric. Beat last.",sh:true,swap:"Shoulder-safe: machine incline / landmine press"},
-      {n:"Weighted Dips",sets:4,target:"6-8",note:"3s negative. Limit depth if labrum complains.",sh:true,swap:"Shoulder-safe: machine chest press"},
-      {n:"Low-to-High Cable Fly",sets:4,target:"12-15",note:"Stretch bottom, squeeze top.",sh:false,swap:"Variety: pec deck"},
-      {n:"Lean-Away Cable Lateral",sets:4,target:"12-15",note:"1s pause top. Side delts = width.",sh:false,swap:"Variety: seated strict DB lateral"},
-      {n:"DB Mechanical Drop Set",sets:3,target:"10+10+10",note:"Full → top-half → partials, no rest.",sh:false,swap:"Variety: cable lateral"},
-      {n:"Machine Lateral Raise",sets:3,target:"20",note:"Constant tension, no lockout.",sh:false,swap:"Variety: leaning cable lateral"},
-      {n:"Overhead Cable Extension",sets:3,target:"10-12",note:"Long head, full overhead stretch.",sh:false,swap:"Variety: EZ skull crusher"},
-      {n:"Rope Pushdown",sets:3,target:"12-15",note:"Split rope bottom, 1s squeeze.",sh:false,swap:"Variety: reverse-grip pushdown"},
-      {n:"Hanging Oblique Knee Raise",sets:3,target:"12/side",note:"Twist to each side at top.",sh:false,swap:"Variety: cable woodchop"},
-      {n:"Ab Wheel Rollout",sets:3,target:"10",note:"Brace hard, no lower-back arch.",sh:false,swap:"Easier: cable crunch"},
-    ],
-    PULL:[
-      {n:"Weighted Pull-Up",sets:5,target:"3-5",note:"BENCHMARK. Beat last added weight.",sh:false,swap:"Easier: band-assisted or negatives"},
-      {n:"Strict Bar Muscle-Up",sets:4,target:"2-3",note:"No kip, 3s negative.",sh:true,swap:"Shoulder-safe: pull-up + dip separately"},
-      {n:"Wide-Grip Pulldown",sets:4,target:"10-12",note:"Dead-hang stretch top, elbows to hips.",sh:false,swap:"Variety: underhand pulldown"},
-      {n:"Straight-Arm Pullover",sets:4,target:"12-15",note:"#1 lat-flare. Arms straight.",sh:false,swap:"Variety: DB pullover"},
-      {n:"Chest-Supported T-Bar Row",sets:4,target:"8-10",note:"2s hold peak. Mid-back thickness.",sh:false,swap:"Variety: seal row"},
-      {n:"Single-Arm Cable Row",sets:3,target:"12/side",note:"Rotate + stretch, squeeze at hip.",sh:false,swap:"Variety: single-arm DB row"},
-      {n:"Reverse Pec Deck",sets:4,target:"15-20",note:"Rear delt — every pull day.",sh:false,swap:"Variety: bent-over DB rear fly"},
-      {n:"Face Pull",sets:3,target:"15",note:"Rotate wrists out. Shoulder health.",sh:false,swap:"Variety: band pull-apart"},
-      {n:"Barbell Curl",sets:4,target:"8-10",note:"Heavy, strict, full ROM, no swing.",sh:false,swap:"Variety: EZ bar curl"},
-      {n:"Incline DB Curl",sets:3,target:"12",note:"Long-head stretch at bottom.",sh:false,swap:"Variety: spider curl"},
-      {n:"Hammer Curl",sets:3,target:"12",note:"Brachialis + forearm thickness.",sh:false,swap:"Variety: rope hammer"},
-      {n:"Reverse Barbell Curl",sets:3,target:"12",note:"Brachioradialis — front forearm.",sh:false,swap:"Variety: Zottman curl"},
-      {n:"Farmer's Carry",sets:3,target:"40m",note:"Grip + trap. Log added weight.",sh:false,swap:"Variety: dead hang max"},
-    ],
-    LEGS:[
-      {n:"Box Jump",sets:3,target:"5",note:"Explosive primer. Skip if neck healing.",sh:false,swap:"Variety: broad jump"},
-      {n:"KB Swing",sets:3,target:"15",note:"Hip hinge + glute activation.",sh:false,swap:"Variety: banded hip thrust"},
-      {n:"Leg Extension (pre-exhaust)",sets:3,target:"15",note:"Exhaust quad before squat.",sh:false,swap:"Variety: single-leg extension"},
-      {n:"Heels-Up Barbell Squat",sets:4,target:"6-8",note:"3s descent, heels up = quad. Brace.",sh:false,swap:"Variety: hack squat"},
-      {n:"Leg Press (feet low)",sets:4,target:"10-12",note:"3s eccentric, feet low. Drop set final.",sh:false,swap:"Variety: single-leg press"},
-      {n:"Bulgarian Split Squat",sets:3,target:"8/leg",note:"Unilateral, fix imbalances.",sh:false,swap:"Variety: goblet split squat"},
-      {n:"Seated Leg Curl",sets:4,target:"10-12",note:"Full stretch top, 2s hold.",sh:false,swap:"Harder: Nordic curl"},
-      {n:"Lying Leg Curl",sets:3,target:"12",note:"2s hold, constant tension.",sh:false,swap:"Variety: ball curl"},
-      {n:"Good Morning",sets:3,target:"10",note:"Hip hinge, hamstring stretch.",sh:false,swap:"Variety: cable pull-through"},
-      {n:"Standing Calf Raise",sets:4,target:"15-20",note:"Full stretch, 1s pause top.",sh:false,swap:"Variety: single-leg raise"},
-      {n:"Seated Calf Raise",sets:3,target:"20",note:"Superset, no rest. Soleus.",sh:false,swap:"Variety: donkey raise"},
-      {n:"Russian Twist (weighted)",sets:4,target:"20 total",note:"Full rotation, slow.",sh:false,swap:"Variety: cable woodchop"},
-      {n:"Side Plank Hip Dips",sets:3,target:"15/side",note:"Oblique shelf.",sh:false,swap:"Variety: Copenhagen plank"},
-      {n:"Cable Woodchop",sets:3,target:"12/side",note:"Rotational oblique.",sh:false,swap:"Variety: Pallof press"},
-      {n:"Hanging Leg Raises",sets:3,target:"12",note:"Posterior tilt top, no swing.",sh:false,swap:"Harder: toes-to-bar"},
-    ],
-    UPPER:[
-      {n:"Planche Hold",sets:4,target:"Max sec",note:"Log seconds. Beat previous session.",sh:true,swap:"Easier: next regression down"},
-      {n:"Ring Support Hold",sets:3,target:"20-30s",note:"Rings turned out, straight body.",sh:true,swap:"Shoulder-safe: parallel-bar support"},
-      {n:"Weighted Pull-Up",sets:5,target:"3-5",note:"Benchmark. Cluster for last rep.",sh:false,swap:"Easier: assisted negative"},
-      {n:"Weighted Ring Dip",sets:4,target:"5-6",note:"3s negative, rings recruit stabilizers.",sh:true,swap:"Shoulder-safe: machine dip"},
-      {n:"Strict Bar Muscle-Up",sets:4,target:"3-4",note:"No kip, 3s negative.",sh:true,swap:"Shoulder-safe: pulldown + dip"},
-      {n:"Trap Bar Deadlift",sets:3,target:"5",note:"Heaviest of week.",sh:false,swap:"Variety: conventional deadlift"},
-      {n:"Incline Barbell Press",sets:4,target:"5-6",note:"2s descent. Light first weeks back.",sh:true,swap:"Shoulder-safe: incline machine"},
-      {n:"Pendlay Row",sets:4,target:"6",note:"Row from floor, explosive.",sh:false,swap:"Variety: strict bent row"},
-      {n:"Barbell Shrug",sets:3,target:"12",note:"1s hold top. Upper-back thickness.",sh:false,swap:"Variety: DB shrug"},
-      {n:"Band Pull-Apart",sets:3,target:"25",note:"Rear delt + shoulder health.",sh:false,swap:"Variety: face pull"},
-      {n:"Wrist Curl + Reverse",sets:2,target:"15 ea",note:"Wrist health for planche.",sh:false,swap:"Variety: plate pinch"},
-    ],
-    PUMP:[
-      {n:"Cable Lateral (giant set)",sets:4,target:"15",note:"4 rounds A→B→C→D no rest.",sh:false,swap:"Variety: leaning cable"},
-      {n:"DB Lateral (giant set)",sets:4,target:"15",note:"Same round. Strict.",sh:false,swap:"Variety: plate lateral"},
-      {n:"Partial Lateral (giant set)",sets:4,target:"15",note:"Top-half reps.",sh:false,swap:"Variety: single-arm cable"},
-      {n:"Machine Lateral (giant set)",sets:4,target:"20",note:"Finisher, no lockout.",sh:false,swap:"Variety: myo-reps"},
-      {n:"Low Incline Machine Press",sets:3,target:"12",note:"Mind-muscle, joint-friendly.",sh:true,swap:"Shoulder-safe: cable fly"},
-      {n:"Cable Fly Stretch Hold",sets:2,target:"30s",note:"Loaded stretch at peak.",sh:false,swap:"Variety: pec-deck stretch"},
-      {n:"EZ Bar Curl (superset)",sets:3,target:"10",note:"SS w/ skull crusher.",sh:false,swap:"Variety: barbell curl"},
-      {n:"Skull Crusher (superset)",sets:3,target:"10",note:"SS w/ curl. Rest after both.",sh:false,swap:"Variety: DB skull crusher"},
-      {n:"Hammer Curl",sets:3,target:"12",note:"Brachialis.",sh:false,swap:"Variety: cross-body hammer"},
-      {n:"Cable Tricep Ext",sets:3,target:"15",note:"Lateral head pump.",sh:false,swap:"Variety: single-arm overhead"},
-      {n:"Neck Flexion + Extension",sets:3,target:"15 ea",note:"Gentle if neck healing.",sh:false,swap:"Variety: 4-way neck machine"},
-    ],
-  }
+<div id="root"><div class="loading"><h1>VITAL</h1><div class="spin"></div><div style="color:#637268;font-size:12px;letter-spacing:2px">PREPARING THE TEMPLE…</div></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.6/babel.min.js"></script>
+<script type="text/babel" data-presets="react">
+const {useState,useEffect,useMemo,useRef}=React;
+const Store=(()=>{let ok=false;const mem={};
+ try{const k='__vital_test__';localStorage.setItem(k,'1');localStorage.removeItem(k);ok=true;}catch(e){ok=false;}
+ return{available:ok,
+  get(key,def){try{if(ok){const v=localStorage.getItem(key);return v==null?def:JSON.parse(v);}return key in mem?mem[key]:def;}catch(e){return def;}},
+  set(key,val){try{if(ok)localStorage.setItem(key,JSON.stringify(val));else mem[key]=val;}catch(e){mem[key]=val;}}};})();
+function useStored(key,def){const[v,setV]=useState(()=>Store.get(key,def));useEffect(()=>{Store.set(key,v)},[key,v]);return[v,setV];}
+const uid=()=>Math.random().toString(36).slice(2,9);
+const today=()=>new Date().toISOString().slice(0,10);
+const fmtDate=(iso)=>new Date(iso).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});
+const fmtTime=(iso)=>new Date(iso).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});
+const clone=(o)=>JSON.parse(JSON.stringify(o));
+const CATS=["Calisthenics","Barbell","Dumbbell","Kettlebell","Landmine","Machine/Cable","Cardio","Core/Abs","Functional","Mobility"];
+const PATTERNS=["Push","Pull","Squat","Hinge","Lunge","Core","Carry","Conditioning","Skill","Mobility","Olympic"];
+const EX=[
+ {id:"pushup",n:"Push-Up",cat:"Calisthenics",p:"Push",lv:"Foundation",cue:"Elbows ~45°, body one line, full lockout."},
+ {id:"diamond",n:"Diamond Push-Up",cat:"Calisthenics",p:"Push",lv:"Intermediate",cue:"Hands together, hits triceps hard."},
+ {id:"pike",n:"Pike Push-Up",cat:"Calisthenics",p:"Push",lv:"Intermediate",cue:"Hips high — handstand-press prep."},
+ {id:"pspu",n:"Pseudo-Planche Push-Up",cat:"Calisthenics",p:"Push",lv:"Advanced",cue:"Hands by hips, lean forward."},
+ {id:"dips",n:"Parallel Bar Dips",cat:"Calisthenics",p:"Push",lv:"Intermediate",cue:"Slight forward lean, full depth, control."},
+ {id:"hspu",n:"Wall Handstand Push-Up",cat:"Calisthenics",p:"Push",lv:"Advanced",cue:"Chest to wall, head to floor, press."},
+ {id:"pullup",n:"Pull-Up",cat:"Calisthenics",p:"Pull",lv:"Foundation",cue:"Dead hang to chin over bar, no kip."},
+ {id:"chinup",n:"Chin-Up",cat:"Calisthenics",p:"Pull",lv:"Foundation",cue:"Supinated grip — more biceps."},
+ {id:"row",n:"Inverted / Australian Row",cat:"Calisthenics",p:"Pull",lv:"Beginner",cue:"Body straight, pull chest to bar."},
+ {id:"archer",n:"Archer Pull-Up",cat:"Calisthenics",p:"Pull",lv:"Advanced",cue:"One arm bent, other straight."},
+ {id:"scap",n:"Scapular Pull-Up",cat:"Calisthenics",p:"Pull",lv:"Beginner",cue:"Straight arms, depress/retract — joint prep."},
+ {id:"sq",n:"Bodyweight Squat",cat:"Calisthenics",p:"Squat",lv:"Foundation",cue:"Hips back & down, full depth, knees track toes."},
+ {id:"pistol",n:"Pistol Squat",cat:"Calisthenics",p:"Squat",lv:"Advanced",cue:"One leg, full depth, free leg extended."},
+ {id:"hollow",n:"Hollow Body Hold",cat:"Calisthenics",p:"Core",lv:"Beginner",cue:"Low back pressed down, ribs in."},
+ {id:"lsit",n:"L-Sit",cat:"Calisthenics",p:"Core",lv:"Intermediate",cue:"Push floor down, legs straight & level."},
+ {id:"hs",n:"Handstand (Wall)",cat:"Calisthenics",p:"Skill",lv:"Intermediate",cue:"Stacked shoulders, point toes, push tall."},
+ {id:"planche",n:"Planche Progression",cat:"Calisthenics",p:"Skill",lv:"Advanced",cue:"Tuck → straddle → full. Protract & lean."},
+ {id:"fl",n:"Front Lever Progression",cat:"Calisthenics",p:"Skill",lv:"Advanced",cue:"Tuck → adv tuck → straddle. Straight arms."},
+ {id:"mu",n:"Muscle-Up",cat:"Calisthenics",p:"Skill",lv:"Advanced",cue:"Explosive pull, fast transition over bar."},
+ {id:"flag",n:"Human Flag Progression",cat:"Calisthenics",p:"Skill",lv:"Advanced",cue:"Top arm pulls / bottom arm pushes."},
+ {id:"bsq",n:"Barbell Back Squat",cat:"Barbell",p:"Squat",lv:"Core lift",cue:"Brace, sit between hips, drive through midfoot."},
+ {id:"fsq",n:"Front Squat",cat:"Barbell",p:"Squat",lv:"Core lift",cue:"Elbows high, upright torso, quad-dominant."},
+ {id:"dl",n:"Deadlift",cat:"Barbell",p:"Hinge",lv:"Core lift",cue:"Bar over midfoot, lats tight, push the floor away."},
+ {id:"rdl",n:"Romanian Deadlift",cat:"Barbell",p:"Hinge",lv:"Core lift",cue:"Soft knees, hips back, feel the hamstring stretch."},
+ {id:"bp",n:"Bench Press",cat:"Barbell",p:"Push",lv:"Core lift",cue:"Shoulder blades pinned, bar to lower chest, drive."},
+ {id:"ohp",n:"Overhead Press",cat:"Barbell",p:"Push",lv:"Core lift",cue:"Brace glutes, press, bar finishes over the ears."},
+ {id:"brow",n:"Barbell Row",cat:"Barbell",p:"Pull",lv:"Core lift",cue:"Hinge ~45°, pull to belt, no jerking."},
+ {id:"hipthr",n:"Barbell Hip Thrust",cat:"Barbell",p:"Hinge",lv:"Accessory",cue:"Chin tucked, squeeze glutes at top, ribs down."},
+ {id:"pclean",n:"Power Clean",cat:"Barbell",p:"Olympic",lv:"Advanced",cue:"Explode from floor, fast elbows, catch in quarter-squat."},
+ {id:"pushpr",n:"Push Press",cat:"Barbell",p:"Push",lv:"Intermediate",cue:"Dip-drive with legs, press overhead."},
+ {id:"gm",n:"Good Morning",cat:"Barbell",p:"Hinge",lv:"Accessory",cue:"Light load, hinge — hamstrings & erectors."},
+ {id:"dbbench",n:"DB Bench Press",cat:"Dumbbell",p:"Push",lv:"Core",cue:"Greater range than barbell — control the stretch."},
+ {id:"dbincl",n:"Incline DB Press",cat:"Dumbbell",p:"Push",lv:"Core",cue:"~30° bench, upper-chest focus."},
+ {id:"dbshld",n:"DB Shoulder Press",cat:"Dumbbell",p:"Push",lv:"Core",cue:"Seated or standing, press without flaring."},
+ {id:"arnold",n:"Arnold Press",cat:"Dumbbell",p:"Push",lv:"Accessory",cue:"Rotate palms through the press — full delt."},
+ {id:"dbrow",n:"One-Arm DB Row",cat:"Dumbbell",p:"Pull",lv:"Core",cue:"Flat back, drive elbow to hip, squeeze."},
+ {id:"dbrdl",n:"DB Romanian Deadlift",cat:"Dumbbell",p:"Hinge",lv:"Core",cue:"Hips back, hamstrings load, neutral spine."},
+ {id:"goblet",n:"Goblet Squat",cat:"Dumbbell",p:"Squat",lv:"Core",cue:"Hold at chest, elbows inside knees, sit deep."},
+ {id:"dblunge",n:"DB Walking Lunge",cat:"Dumbbell",p:"Lunge",lv:"Core",cue:"Long step, vertical shin, drive through heel."},
+ {id:"dbstep",n:"DB Step-Up",cat:"Dumbbell",p:"Lunge",lv:"Accessory",cue:"Full foot on box, no push off back leg."},
+ {id:"dbcurl",n:"DB Biceps Curl",cat:"Dumbbell",p:"Pull",lv:"Accessory",cue:"No swing, full squeeze, control down."},
+ {id:"latraise",n:"DB Lateral Raise",cat:"Dumbbell",p:"Push",lv:"Accessory",cue:"Lead with elbows, stop at shoulder height."},
+ {id:"dbpull",n:"DB Pullover",cat:"Dumbbell",p:"Pull",lv:"Accessory",cue:"Lats & serratus — control the stretch overhead."},
+ {id:"kbsw",n:"Kettlebell Swing",cat:"Kettlebell",p:"Hinge",lv:"Core",cue:"Hip snap, not a squat — bell floats, glutes fire."},
+ {id:"kbgob",n:"KB Goblet Squat",cat:"Kettlebell",p:"Squat",lv:"Core",cue:"Hold horns at chest, sit between hips."},
+ {id:"kbclean",n:"KB Clean",cat:"Kettlebell",p:"Hinge",lv:"Intermediate",cue:"Tame the arc — bell lands soft in rack."},
+ {id:"kbcp",n:"KB Clean & Press",cat:"Kettlebell",p:"Push",lv:"Intermediate",cue:"Clean to rack, press, control the return."},
+ {id:"kbsnatch",n:"KB Snatch",cat:"Kettlebell",p:"Hinge",lv:"Advanced",cue:"One motion floor to overhead, punch through at top."},
+ {id:"tgu",n:"Turkish Get-Up",cat:"Kettlebell",p:"Core",lv:"Advanced",cue:"Slow, deliberate — eyes on bell the whole way."},
+ {id:"kbcarry",n:"KB Front-Rack Carry",cat:"Kettlebell",p:"Carry",lv:"Core",cue:"Bell in rack, brace hard, walk tall."},
+ {id:"kbwind",n:"KB Windmill",cat:"Kettlebell",p:"Core",lv:"Advanced",cue:"Hips shift, eyes on overhead bell, hinge to floor."},
+ {id:"kbhalo",n:"KB Halo",cat:"Kettlebell",p:"Mobility",lv:"Beginner",cue:"Circle the head — shoulder mobility & warm-up."},
+ {id:"kbsldl",n:"KB Single-Leg Deadlift",cat:"Kettlebell",p:"Hinge",lv:"Intermediate",cue:"Hips square, slow tempo, balance + hamstring."},
+ {id:"lmpress",n:"Landmine Press",cat:"Landmine",p:"Push",lv:"Core",cue:"Shoulder-friendly press on the arc."},
+ {id:"lmrow",n:"Landmine Row (Meadows)",cat:"Landmine",p:"Pull",lv:"Core",cue:"Stand perpendicular, row the sleeve to hip."},
+ {id:"lmthrust",n:"Landmine Thruster",cat:"Landmine",p:"Push",lv:"Intermediate",cue:"Squat to press in one drive — full-body."},
+ {id:"lmtwist",n:"Landmine Rotation",cat:"Landmine",p:"Core",lv:"Intermediate",cue:"Rotate from hips, arms long — anti-rotation power."},
+ {id:"lmrdl",n:"Landmine RDL",cat:"Landmine",p:"Hinge",lv:"Core",cue:"Hinge with the sleeve, hamstring loaded."},
+ {id:"lmlunge",n:"Landmine Reverse Lunge",cat:"Landmine",p:"Lunge",lv:"Intermediate",cue:"Hold sleeve at chest, step back, drive up."},
+ {id:"latpull",n:"Lat Pulldown",cat:"Machine/Cable",p:"Pull",lv:"Core",cue:"Drive elbows down, chest up, controlled."},
+ {id:"crow",n:"Seated Cable Row",cat:"Machine/Cable",p:"Pull",lv:"Core",cue:"Tall chest, pull to navel, squeeze mid-back."},
+ {id:"legpress",n:"Leg Press",cat:"Machine/Cable",p:"Squat",lv:"Core",cue:"Full depth without rounding, drive through heels."},
+ {id:"legcurl",n:"Leg Curl",cat:"Machine/Cable",p:"Hinge",lv:"Accessory",cue:"Squeeze hamstrings, slow eccentric."},
+ {id:"legext",n:"Leg Extension",cat:"Machine/Cable",p:"Squat",lv:"Accessory",cue:"Pause at top, control down — quad isolation."},
+ {id:"cablefly",n:"Cable Fly",cat:"Machine/Cable",p:"Push",lv:"Accessory",cue:"Soft elbows, hug the midline, stretch the pec."},
+ {id:"facepull",n:"Face Pull",cat:"Machine/Cable",p:"Pull",lv:"Accessory",cue:"Pull to forehead, externally rotate — rear delt & health."},
+ {id:"pushdown",n:"Triceps Pushdown",cat:"Machine/Cable",p:"Push",lv:"Accessory",cue:"Elbows pinned, full lockout."},
+ {id:"z2",n:"Zone 2 Cardio",cat:"Cardio",p:"Conditioning",lv:"Base",cue:"Easy nose-breathing pace, conversational. 30–60 min."},
+ {id:"incline",n:"Incline Treadmill Walk",cat:"Cardio",p:"Conditioning",lv:"Base",cue:"High burn, low impact — 12% incline style."},
+ {id:"row_erg",n:"Rowing Erg",cat:"Cardio",p:"Conditioning",lv:"Core",cue:"Legs → hips → arms; reverse back. Full body."},
+ {id:"bike",n:"Assault Bike Intervals",cat:"Cardio",p:"Conditioning",lv:"Hard",cue:"e.g. 30s hard / 30s easy × 10. Brutal, efficient."},
+ {id:"jumprope",n:"Jump Rope",cat:"Cardio",p:"Conditioning",lv:"Core",cue:"Light bounce, wrists turn the rope."},
+ {id:"sprints",n:"Sprints",cat:"Cardio",p:"Conditioning",lv:"Hard",cue:"Warm up fully; 6–10 × 60–100m, full recovery."},
+ {id:"stairs",n:"Stairmaster",cat:"Cardio",p:"Conditioning",lv:"Core",cue:"Steady climb, don't lean on rails. 20–30 min."},
+ {id:"plank",n:"Plank",cat:"Core/Abs",p:"Core",lv:"Beginner",cue:"Glutes & abs braced, no sag, breathe."},
+ {id:"sideplank",n:"Side Plank",cat:"Core/Abs",p:"Core",lv:"Beginner",cue:"Stack hips, lift high — obliques & QL."},
+ {id:"hlr",n:"Hanging Leg Raise",cat:"Core/Abs",p:"Core",lv:"Intermediate",cue:"No swing, posterior tilt, toes toward bar."},
+ {id:"ttb",n:"Toes-to-Bar",cat:"Core/Abs",p:"Core",lv:"Advanced",cue:"Compress hard, control the lower."},
+ {id:"cablecr",n:"Cable Crunch",cat:"Core/Abs",p:"Core",lv:"Core",cue:"Crunch from the ribs, hips fixed — loadable abs."},
+ {id:"abwheel",n:"Ab Wheel Rollout",cat:"Core/Abs",p:"Core",lv:"Intermediate",cue:"Posterior tilt, ribs down, no low-back sag."},
+ {id:"pallof",n:"Pallof Press",cat:"Core/Abs",p:"Core",lv:"Core",cue:"Resist rotation — anti-rotation core strength."},
+ {id:"deadbug",n:"Dead Bug",cat:"Core/Abs",p:"Core",lv:"Beginner",cue:"Low back glued down, opposite arm/leg, slow."},
+ {id:"russtwist",n:"Russian Twist",cat:"Core/Abs",p:"Core",lv:"Beginner",cue:"Rotate from the trunk, control — obliques."},
+ {id:"dragon",n:"Dragon Flag",cat:"Core/Abs",p:"Core",lv:"Advanced",cue:"Body rigid, pivot on shoulders, lower slow."},
+ {id:"vup",n:"V-Up",cat:"Core/Abs",p:"Core",lv:"Intermediate",cue:"Reach hands to toes, full hollow contraction."},
+ {id:"sled",n:"Sled Push / Drag",cat:"Functional",p:"Conditioning",lv:"Core",cue:"Low drive angle, relentless steps — legs & lungs."},
+ {id:"farmer",n:"Farmer's Carry",cat:"Functional",p:"Carry",lv:"Core",cue:"Heavy, tall posture, grip & core under load."},
+ {id:"battle",n:"Battle Ropes",cat:"Functional",p:"Conditioning",lv:"Core",cue:"Hips drive the waves, brace the trunk. 20–30s."},
+ {id:"boxjump",n:"Box Jump",cat:"Functional",p:"Skill",lv:"Intermediate",cue:"Soft landing, full hip extension, step down."},
+ {id:"slam",n:"Med Ball Slam",cat:"Functional",p:"Conditioning",lv:"Beginner",cue:"Full overhead reach, slam with hips — power & vent."},
+ {id:"bearcrawl",n:"Bear Crawl",cat:"Functional",p:"Conditioning",lv:"Beginner",cue:"Knees hover, opposite limbs, flat back."},
+ {id:"sandbag",n:"Sandbag Clean",cat:"Functional",p:"Hinge",lv:"Intermediate",cue:"Awkward load — hinge, hug, stand."},
+ {id:"broad",n:"Broad Jump",cat:"Functional",p:"Skill",lv:"Intermediate",cue:"Load, swing arms, jump far, stick the landing."},
+ {id:"complex",n:"Kettlebell Complex",cat:"Functional",p:"Conditioning",lv:"Hard",cue:"e.g. clean→squat→press→row × 5/side, no rest."},
+ {id:"sun",n:"Sun Salutation A",cat:"Mobility",p:"Mobility",lv:"Foundation",cue:"Breath-linked flow — warms spine & shoulders."},
+ {id:"wgs",n:"World's Greatest Stretch",cat:"Mobility",p:"Mobility",lv:"Beginner",cue:"Lunge, rotate, reach — full-body opener."},
+ {id:"9090",n:"Hip 90/90",cat:"Mobility",p:"Mobility",lv:"Beginner",cue:"Internal/external hip rotation, switch slowly."},
+ {id:"catcow",n:"Cat-Cow",cat:"Mobility",p:"Mobility",lv:"Beginner",cue:"Segment the spine with the breath."},
+ {id:"jeff",n:"Jefferson Curl",cat:"Mobility",p:"Mobility",lv:"Intermediate",cue:"Light load, roll down vertebra by vertebra."},
+ {id:"dsq",n:"Deep Squat Hold",cat:"Mobility",p:"Mobility",lv:"Beginner",cue:"Sit in the bottom, pry knees, breathe."},
+ {id:"couch",n:"Couch Stretch",cat:"Mobility",p:"Mobility",lv:"Beginner",cue:"Rear foot up wall, tuck pelvis — hip flexor."},
+ {id:"tspine",n:"Thoracic Rotation",cat:"Mobility",p:"Mobility",lv:"Beginner",cue:"Open the upper back — reach and rotate."},
+];
+const DEFAULT_SPLITS=[
+ {id:"hybrid",n:"Hybrid — Iron + Calisthenics",focus:"LaRon blend · 4 day",days:[
+   {n:"Push (Bar + BW)",items:[{ex:"bp",sets:4,reps:"6–8"},{ex:"ohp",sets:3,reps:"8"},{ex:"dips",sets:3,reps:"AMRAP"},{ex:"latraise",sets:3,reps:"15"},{ex:"pushdown",sets:3,reps:"12"}]},
+   {n:"Pull (Bar + BW)",items:[{ex:"dl",sets:3,reps:"5"},{ex:"pullup",sets:4,reps:"AMRAP"},{ex:"brow",sets:3,reps:"8"},{ex:"facepull",sets:3,reps:"15"},{ex:"dbcurl",sets:3,reps:"12"}]},
+   {n:"Legs",items:[{ex:"bsq",sets:4,reps:"6–8"},{ex:"rdl",sets:3,reps:"8"},{ex:"dblunge",sets:3,reps:"10/side"},{ex:"legcurl",sets:3,reps:"12"},{ex:"hlr",sets:3,reps:"12"}]},
+   {n:"Conditioning + Core",items:[{ex:"kbsw",sets:5,reps:"20"},{ex:"farmer",sets:4,reps:"40m"},{ex:"sled",sets:5,reps:"20m"},{ex:"pallof",sets:3,reps:"10/side"},{ex:"plank",sets:3,reps:"60s"}]},
+ ]},
+ {id:"gymppl",n:"Push / Pull / Legs (Gym)",focus:"Hypertrophy · 6 day",days:[
+   {n:"Push",items:[{ex:"bp",sets:4,reps:"6–10"},{ex:"dbincl",sets:3,reps:"10"},{ex:"dbshld",sets:3,reps:"10"},{ex:"latraise",sets:4,reps:"15"},{ex:"cablefly",sets:3,reps:"12"},{ex:"pushdown",sets:3,reps:"12"}]},
+   {n:"Pull",items:[{ex:"dl",sets:3,reps:"5"},{ex:"pullup",sets:4,reps:"8"},{ex:"crow",sets:3,reps:"10"},{ex:"latpull",sets:3,reps:"12"},{ex:"facepull",sets:3,reps:"15"},{ex:"dbcurl",sets:4,reps:"12"}]},
+   {n:"Legs",items:[{ex:"bsq",sets:4,reps:"6–10"},{ex:"rdl",sets:3,reps:"10"},{ex:"legpress",sets:3,reps:"12"},{ex:"legcurl",sets:3,reps:"12"},{ex:"dbstep",sets:3,reps:"12"},{ex:"hlr",sets:4,reps:"12"}]},
+ ]},
+ {id:"ul",n:"Upper / Lower (Gym)",focus:"Strength + size · 4 day",days:[
+   {n:"Upper A (Strength)",items:[{ex:"bp",sets:5,reps:"5"},{ex:"brow",sets:4,reps:"6"},{ex:"ohp",sets:3,reps:"6"},{ex:"latpull",sets:3,reps:"10"},{ex:"dbcurl",sets:3,reps:"10"}]},
+   {n:"Lower A (Strength)",items:[{ex:"bsq",sets:5,reps:"5"},{ex:"rdl",sets:3,reps:"8"},{ex:"legpress",sets:3,reps:"10"},{ex:"cablecr",sets:3,reps:"15"}]},
+   {n:"Upper B (Hypertrophy)",items:[{ex:"dbincl",sets:4,reps:"10"},{ex:"crow",sets:4,reps:"10"},{ex:"dbshld",sets:3,reps:"12"},{ex:"cablefly",sets:3,reps:"15"},{ex:"facepull",sets:3,reps:"15"}]},
+   {n:"Lower B (Hypertrophy)",items:[{ex:"fsq",sets:4,reps:"8"},{ex:"hipthr",sets:4,reps:"10"},{ex:"legext",sets:3,reps:"15"},{ex:"legcurl",sets:3,reps:"15"},{ex:"abwheel",sets:3,reps:"10"}]},
+ ]},
+ {id:"phul",n:"PHUL — Power / Hypertrophy",focus:"4 day · strength + size",days:[
+   {n:"Power Upper",items:[{ex:"bp",sets:4,reps:"3–5"},{ex:"brow",sets:4,reps:"5"},{ex:"ohp",sets:3,reps:"5"},{ex:"pullup",sets:3,reps:"AMRAP"}]},
+   {n:"Power Lower",items:[{ex:"bsq",sets:4,reps:"3–5"},{ex:"dl",sets:3,reps:"5"},{ex:"legpress",sets:3,reps:"10"},{ex:"legcurl",sets:3,reps:"10"}]},
+   {n:"Hyper Upper",items:[{ex:"dbincl",sets:4,reps:"12"},{ex:"crow",sets:4,reps:"12"},{ex:"latraise",sets:4,reps:"15"},{ex:"cablefly",sets:3,reps:"15"},{ex:"dbcurl",sets:3,reps:"12"},{ex:"pushdown",sets:3,reps:"12"}]},
+   {n:"Hyper Lower",items:[{ex:"fsq",sets:4,reps:"12"},{ex:"rdl",sets:4,reps:"12"},{ex:"legext",sets:3,reps:"15"},{ex:"legcurl",sets:3,reps:"15"},{ex:"cablecr",sets:4,reps:"15"}]},
+ ]},
+ {id:"athletic",n:"Athletic / Functional",focus:"Power, carries, conditioning · 3 day",days:[
+   {n:"Explosive Lower",items:[{ex:"pclean",sets:5,reps:"3"},{ex:"boxjump",sets:4,reps:"5"},{ex:"bsq",sets:4,reps:"5"},{ex:"kbsw",sets:4,reps:"15"},{ex:"farmer",sets:3,reps:"40m"}]},
+   {n:"Upper + Carry",items:[{ex:"pushpr",sets:5,reps:"3"},{ex:"lmpress",sets:3,reps:"8"},{ex:"lmrow",sets:3,reps:"10"},{ex:"pullup",sets:4,reps:"6"},{ex:"kbcarry",sets:3,reps:"40m"}]},
+   {n:"Conditioning",items:[{ex:"complex",sets:5,reps:"1 round"},{ex:"battle",sets:6,reps:"30s"},{ex:"sled",sets:6,reps:"20m"},{ex:"slam",sets:4,reps:"10"},{ex:"bearcrawl",sets:4,reps:"15m"}]},
+ ]},
+ {id:"kb",n:"Kettlebell Strong",focus:"Minimal equipment · 3 day",days:[
+   {n:"Day 1 — Swing & Press",items:[{ex:"kbsw",sets:6,reps:"15"},{ex:"kbcp",sets:5,reps:"5/side"},{ex:"kbgob",sets:4,reps:"10"},{ex:"tgu",sets:3,reps:"2/side"}]},
+   {n:"Day 2 — Snatch & Carry",items:[{ex:"kbsnatch",sets:6,reps:"6/side"},{ex:"kbsldl",sets:4,reps:"8/side"},{ex:"kbcarry",sets:4,reps:"40m"},{ex:"kbwind",sets:3,reps:"5/side"}]},
+   {n:"Day 3 — Complex",items:[{ex:"complex",sets:6,reps:"1 round"},{ex:"kbhalo",sets:3,reps:"8/side"},{ex:"plank",sets:3,reps:"60s"}]},
+ ]},
+ {id:"cppl",n:"Calisthenics PPL",focus:"Bodyweight · 6 day",days:[
+   {n:"Push",items:[{ex:"dips",sets:4,reps:"8–12"},{ex:"pike",sets:3,reps:"8"},{ex:"diamond",sets:3,reps:"12"},{ex:"plank",sets:3,reps:"45s"}]},
+   {n:"Pull",items:[{ex:"pullup",sets:4,reps:"6–10"},{ex:"row",sets:3,reps:"12"},{ex:"chinup",sets:3,reps:"8"},{ex:"hlr",sets:3,reps:"10"}]},
+   {n:"Legs",items:[{ex:"pistol",sets:4,reps:"5"},{ex:"sq",sets:3,reps:"20"},{ex:"dsq",sets:3,reps:"60s"},{ex:"sun",sets:2,reps:"5 rounds"}]},
+ ]},
+ {id:"skill",n:"Skill + Strength",focus:"Handstand / Planche / Front Lever",days:[
+   {n:"Day 1 — Handstand & Push",items:[{ex:"hs",sets:5,reps:"30s"},{ex:"hspu",sets:4,reps:"5"},{ex:"planche",sets:4,reps:"15s"},{ex:"hollow",sets:3,reps:"40s"}]},
+   {n:"Day 2 — Lever & Pull",items:[{ex:"fl",sets:5,reps:"12s"},{ex:"archer",sets:3,reps:"5"},{ex:"lsit",sets:4,reps:"20s"},{ex:"mu",sets:4,reps:"3"}]},
+ ]},
+ {id:"dad30",n:"Dad 30",focus:"Minimal time, full body · 30 min",days:[
+   {n:"Full Body",items:[{ex:"goblet",sets:3,reps:"15"},{ex:"pushup",sets:3,reps:"15"},{ex:"dbrow",sets:3,reps:"12"},{ex:"kbsw",sets:3,reps:"20"},{ex:"plank",sets:3,reps:"45s"}]},
+ ]},
+];
+const FOODS=[
+ {n:"Chicken breast (6 oz)",cat:"Protein",pro:54,cal:280,c:0,f:6},
+ {n:"Chicken thigh (6 oz)",cat:"Protein",pro:42,cal:340,c:0,f:18},
+ {n:"90/10 ground beef (6 oz)",cat:"Protein",pro:46,cal:340,c:0,f:18},
+ {n:"Salmon (6 oz)",cat:"Protein",pro:40,cal:360,c:0,f:22},
+ {n:"Eggs (3 large)",cat:"Protein",pro:18,cal:215,c:1,f:15},
+ {n:"Egg whites (1 cup)",cat:"Protein",pro:26,cal:120,c:2,f:0},
+ {n:"Greek yogurt 0% (1 cup)",cat:"Protein",pro:23,cal:130,c:9,f:0},
+ {n:"Cottage cheese (1 cup)",cat:"Protein",pro:24,cal:180,c:8,f:5},
+ {n:"Whey protein (1 scoop)",cat:"Protein",pro:25,cal:120,c:3,f:2},
+ {n:"Tuna (1 can)",cat:"Protein",pro:27,cal:120,c:0,f:1},
+ {n:"Tofu (½ block, firm)",cat:"Protein",pro:20,cal:180,c:4,f:11},
+ {n:"Lentils, cooked (1 cup)",cat:"Protein",pro:18,cal:230,c:40,f:1},
+ {n:"White rice, cooked (1 cup)",cat:"Carb",pro:4,cal:205,c:45,f:0},
+ {n:"Jasmine rice (1.5 cups)",cat:"Carb",pro:6,cal:310,c:68,f:0},
+ {n:"Sweet potato (large)",cat:"Carb",pro:4,cal:180,c:41,f:0},
+ {n:"Oats, dry (1 cup)",cat:"Carb",pro:11,cal:300,c:54,f:5},
+ {n:"Quinoa, cooked (1 cup)",cat:"Carb",pro:8,cal:220,c:39,f:4},
+ {n:"Whole-grain bread (2 slices)",cat:"Carb",pro:8,cal:160,c:30,f:2},
+ {n:"Banana",cat:"Fruit",pro:1,cal:105,c:27,f:0},
+ {n:"Berries (1 cup)",cat:"Fruit",pro:1,cal:70,c:17,f:0},
+ {n:"Apple",cat:"Fruit",pro:0,cal:95,c:25,f:0},
+ {n:"Avocado (½)",cat:"Fat",pro:2,cal:160,c:9,f:15},
+ {n:"Olive oil (1 tbsp)",cat:"Fat",pro:0,cal:120,c:0,f:14},
+ {n:"Almonds (1 oz)",cat:"Fat",pro:6,cal:165,c:6,f:14},
+ {n:"Peanut butter (2 tbsp)",cat:"Fat",pro:8,cal:190,c:7,f:16},
+ {n:"Broccoli (2 cups)",cat:"Veg",pro:5,cal:60,c:12,f:0},
+ {n:"Mixed greens (2 cups)",cat:"Veg",pro:2,cal:20,c:4,f:0},
+ {n:"Pepper + onion sauté",cat:"Veg",pro:2,cal:80,c:14,f:2},
+];
+const SNACKS=[
+ {n:"Greek yogurt + berries + honey",pro:24,cal:220,when:"Morning",note:"Probiotic + protein to open the day."},
+ {n:"Apple + 2 tbsp peanut butter",pro:8,cal:290,when:"Morning",note:"Fiber + fat for steady energy."},
+ {n:"Hard-boiled eggs (2) + fruit",pro:13,cal:240,when:"Morning",note:"Portable, slow-burning."},
+ {n:"Cottage cheese + pineapple",pro:24,cal:230,when:"Anytime",note:"Casein — keeps you full for hours."},
+ {n:"Protein shake + banana",pro:30,cal:300,when:"Post-workout",note:"Fast protein + carbs to refuel."},
+ {n:"Beef jerky + almonds",pro:22,cal:280,when:"Anytime",note:"No-prep protein on the go."},
+ {n:"Edamame (1 cup) + sea salt",pro:18,cal:190,when:"Anytime",note:"Plant protein + fiber."},
+ {n:"Overnight oats + whey",pro:30,cal:360,when:"Morning",note:"Build it the night before."},
+ {n:"Tuna on whole-grain crackers",pro:22,cal:240,when:"Anytime",note:"Cheap, lean, omega-3s."},
+ {n:"Dark chocolate + walnuts",pro:5,cal:240,when:"Evening",note:"Magnesium + a treat that won't wreck sleep."},
+];
+const MEALS={
+ Breakfast:[
+  {n:"Power Scramble",pro:42,cal:520,desc:"3 eggs + egg whites, spinach, peppers, oats on the side.",ing:["3 eggs","1 cup egg whites","Spinach + peppers","½ cup oats"]},
+  {n:"High-Protein Overnight Oats",pro:38,cal:560,desc:"Build it the night before.",ing:["1 cup oats","1.5 scoops whey","1 cup milk","1 tbsp PB","Banana"]},
+  {n:"Greek Yogurt Power Bowl",pro:40,cal:480,desc:"No cooking, 2-minute assembly.",ing:["1.5 cups Greek yogurt","½ cup granola","Berries","Honey","Chia + almonds"]},
+  {n:"Breakfast Burrito (prep)",pro:36,cal:540,desc:"Wrap and freeze a batch.",ing:["3 eggs","4 oz turkey sausage","Black beans","Cheese","Whole-grain tortilla"]},
+ ],
+ Lunch:[
+  {n:"Chicken & Rice Bowl",pro:52,cal:610,desc:"The hypertrophy staple.",ing:["8 oz chicken","1.5 cups rice","Broccoli","Olive oil, garlic"]},
+  {n:"Salmon, Quinoa & Greens",pro:44,cal:640,desc:"Omega-3s + complete protein.",ing:["7 oz salmon","1 cup quinoa","2 cups spinach","Lemon, feta"]},
+  {n:"Beef & Sweet Potato Bowl",pro:48,cal:720,desc:"The mass-builder.",ing:["8 oz 90/10 beef","1 sweet potato","Black beans","Avocado, salsa"]},
+  {n:"Big Protein Salad",pro:46,cal:520,desc:"Lighter, high-volume.",ing:["8 oz chicken","Mixed greens","Chickpeas","Egg","Olive oil + vinegar"]},
+ ],
+ Dinner:[
+  {n:"Steak, Potatoes & Asparagus",pro:50,cal:680,desc:"Classic strength dinner.",ing:["8 oz sirloin","2 small potatoes","Asparagus","Butter, garlic"]},
+  {n:"Turkey Chili (batch)",pro:42,cal:560,desc:"5+ servings, freezes great.",ing:["1.5 lb ground turkey","2 cans beans","Tomatoes","Peppers, onion, spices"]},
+  {n:"Shrimp Stir-Fry",pro:40,cal:520,desc:"Fast, lean, high-volume.",ing:["8 oz shrimp","2 cups veg","1 cup rice","Soy, ginger, garlic"]},
+  {n:"Baked Cod Sheet Pan",pro:44,cal:480,desc:"One pan, easy cleanup.",ing:["8 oz cod","Broccoli + peppers","Sweet potato","Olive oil, lemon"]},
+ ],
 };
-
-// LIBRARY — alternative splits (lighter detail, fully usable + buildable)
-const SPLIT_LIBRARY = [
-  {id:"ppl6", name:"Classic Push/Pull/Legs", emoji:"🔄", color:"var(--blue)", tag:"6-DAY", desc:"The gold-standard hypertrophy split. Run twice a week.",
-   days:{
-     PUSH:[mk("Barbell Bench Press",4,"6-8"),mk("Incline DB Press",4,"8-12"),mk("Overhead Press",3,"8-10"),mk("Lateral Raise",4,"12-20"),mk("Cable Fly",3,"12-15"),mk("Tricep Pushdown",3,"12-15"),mk("Overhead Extension",3,"10-12")],
-     PULL:[mk("Pull-Up",4,"6-10"),mk("Barbell Row",4,"8-10"),mk("Lat Pulldown",3,"10-12"),mk("Cable Row",3,"10-12"),mk("Face Pull",3,"15-20"),mk("Barbell Curl",3,"8-12"),mk("Hammer Curl",3,"12")],
-     LEGS:[mk("Back Squat",4,"6-8"),mk("Romanian Deadlift",4,"8-10"),mk("Leg Press",3,"12-15"),mk("Leg Curl",3,"12-15"),mk("Leg Extension",3,"15"),mk("Standing Calf Raise",4,"15-20"),mk("Hanging Leg Raise",3,"12")],
-   }},
-  {id:"ul4", name:"Upper / Lower", emoji:"⬆", color:"var(--green)", tag:"4-DAY", desc:"Great for strength + size on 4 days. Hits each muscle 2x/week.",
-   days:{
-     "UPPER A":[mk("Bench Press",4,"5-8"),mk("Barbell Row",4,"6-10"),mk("Overhead Press",3,"8-10"),mk("Lat Pulldown",3,"10-12"),mk("Lateral Raise",3,"15"),mk("Bicep Curl",3,"12"),mk("Tricep Pushdown",3,"12")],
-     "LOWER A":[mk("Back Squat",4,"5-8"),mk("Romanian Deadlift",3,"8-10"),mk("Leg Press",3,"12"),mk("Leg Curl",3,"12"),mk("Calf Raise",4,"15"),mk("Hanging Leg Raise",3,"12")],
-     "UPPER B":[mk("Incline DB Press",4,"8-12"),mk("Pull-Up",4,"6-10"),mk("Cable Row",3,"10"),mk("DB Shoulder Press",3,"10"),mk("Rear Delt Fly",3,"15"),mk("Hammer Curl",3,"12"),mk("Overhead Extension",3,"12")],
-     "LOWER B":[mk("Deadlift",4,"4-6"),mk("Front Squat",3,"8-10"),mk("Walking Lunge",3,"12/leg"),mk("Seated Leg Curl",3,"12"),mk("Seated Calf Raise",4,"15"),mk("Ab Wheel",3,"10")],
-   }},
-  {id:"fb3", name:"Full Body", emoji:"🔵", color:"var(--teal)", tag:"3-DAY", desc:"Best when life is busy or consistency is the goal. Everything, every session.",
-   days:{
-     "DAY A":[mk("Back Squat",3,"6-8"),mk("Bench Press",3,"6-8"),mk("Barbell Row",3,"8-10"),mk("Lateral Raise",3,"15"),mk("Bicep Curl",2,"12"),mk("Plank",3,"45s")],
-     "DAY B":[mk("Deadlift",3,"5"),mk("Overhead Press",3,"8"),mk("Pull-Up",3,"8"),mk("Leg Press",3,"12"),mk("Tricep Pushdown",2,"12"),mk("Hanging Leg Raise",3,"12")],
-     "DAY C":[mk("Front Squat",3,"8"),mk("Incline DB Press",3,"10"),mk("Lat Pulldown",3,"10"),mk("Romanian Deadlift",3,"10"),mk("Hammer Curl",2,"12"),mk("Cable Crunch",3,"15")],
-   }},
-  {id:"arnold", name:"Arnold Split", emoji:"💪", color:"var(--gold)", tag:"6-DAY", desc:"Chest/Back, Shoulders/Arms, Legs — twice over. High volume, classic bodybuilding.",
-   days:{
-     "CHEST & BACK":[mk("Bench Press",4,"8-12"),mk("Incline DB Press",4,"10"),mk("Pull-Up",4,"8-10"),mk("Barbell Row",4,"8-10"),mk("Cable Fly",3,"15"),mk("Straight-Arm Pulldown",3,"12")],
-     "SHOULDERS & ARMS":[mk("Overhead Press",4,"8-10"),mk("Lateral Raise",4,"15"),mk("Rear Delt Fly",3,"15"),mk("Barbell Curl",4,"10"),mk("Skull Crusher",4,"10"),mk("Hammer Curl",3,"12"),mk("Rope Pushdown",3,"15")],
-     "LEGS":[mk("Back Squat",5,"8-12"),mk("Leg Press",4,"12"),mk("Romanian Deadlift",4,"10"),mk("Leg Curl",4,"12"),mk("Leg Extension",3,"15"),mk("Calf Raise",5,"15-20")],
-   }},
-  {id:"phul", name:"Power Hypertrophy (PHUL)", emoji:"⚡", color:"var(--red)", tag:"4-DAY", desc:"2 power days (heavy, low reps) + 2 hypertrophy days (volume). Strength AND size.",
-   days:{
-     "POWER UPPER":[mk("Bench Press",4,"3-5"),mk("Barbell Row",4,"3-5"),mk("Overhead Press",3,"5-8"),mk("Weighted Pull-Up",3,"5-8"),mk("Barbell Curl",3,"6-10"),mk("Close-Grip Bench",3,"6-10")],
-     "POWER LOWER":[mk("Squat",4,"3-5"),mk("Deadlift",4,"3-5"),mk("Leg Press",4,"10-15"),mk("Leg Curl",4,"10-15"),mk("Calf Raise",4,"8-12")],
-     "HYPER UPPER":[mk("Incline DB Press",4,"8-12"),mk("Cable Row",4,"8-12"),mk("DB Shoulder Press",3,"8-12"),mk("Lat Pulldown",3,"10-15"),mk("Lateral Raise",3,"12-15"),mk("Incline Curl",3,"12"),mk("Tricep Pushdown",3,"12")],
-     "HYPER LOWER":[mk("Front Squat",4,"8-12"),mk("Romanian Deadlift",4,"8-12"),mk("Walking Lunge",3,"12"),mk("Leg Extension",3,"15"),mk("Seated Leg Curl",3,"15"),mk("Seated Calf Raise",4,"15")],
-   }},
+const PREPS=[
+ {n:"Bulk Beef & Rice Bowls",pro:48,cal:720,desc:"5 containers, the workhorse.",ing:["2.5 lb 90/10 beef","4 cups rice","2 cans black beans","Avocado, salsa, lime"]},
+ {n:"Chicken & Sweet Potato Prep",pro:52,cal:610,desc:"Lean, preps for days.",ing:["2.5 lb chicken thigh","5 sweet potatoes","Broccoli","Olive oil, paprika"]},
+ {n:"Salmon & Quinoa Boxes",pro:44,cal:640,desc:"Omega-3 forward.",ing:["5 salmon fillets","5 cups quinoa","Spinach","Lemon, feta"]},
+ {n:"Turkey Chili Batch",pro:42,cal:560,desc:"Freezer-friendly, 6+ servings.",ing:["2 lb ground turkey","3 cans beans","Tomatoes","Chili spice"]},
+ {n:"Egg-Bite Cups (12)",pro:14,cal:130,desc:"Grab-and-go breakfast cups.",ing:["12 eggs","Turkey sausage","Spinach","Cheese — muffin tin"]},
+ {n:"Shredded Chicken Base",pro:35,cal:200,desc:"Neutral base for bowls/wraps/salads.",ing:["3 lb chicken breast","Slow-cook + shred","Season per meal"]},
+ {n:"Overnight Oats Jars (5)",pro:30,cal:360,desc:"Five breakfasts at once.",ing:["5 cups oats","7 scoops whey","Milk","PB, banana"]},
+ {n:"Beef & Broccoli Prep",pro:46,cal:580,desc:"Takeout flavor, macro-friendly.",ing:["2.5 lb flank steak","Broccoli","Rice","Soy, ginger, sesame"]},
+ {n:"Lentil & Chicken Bowls",pro:44,cal:600,desc:"Fiber + protein, gut-friendly.",ing:["2 lb chicken","3 cups lentils","Roasted veg","Olive oil, lemon"]},
+ {n:"Greek Chicken Bowls",pro:48,cal:560,desc:"Bright, high-protein, easy.",ing:["2.5 lb chicken (yogurt marinade)","Rice/quinoa","Cucumber, tomato","Tzatziki"]},
 ];
-function mk(n,sets,target){return {n,sets,target,note:"",sh:false,swap:""};}
-</script>
-<script>
-// ============================================================
-// BIOHACK PROTOCOLS + NUTRITION DEFAULTS
-// ============================================================
-const BIOHACKS = [
-  {id:"cold", emoji:"🧊", name:"Cold Exposure", color:"var(--blue)",
-   what:"Cold plunge or cold shower. Triggers norepinephrine (focus, mood), brown-fat activation, and resilience.",
-   how:"2-4 min cold plunge (50-59°F) or 30-90s cold shower at the end of a normal one. 11 min/week total is the researched sweet spot.",
-   when:"Morning for alertness. Avoid right after lifting (blunts hypertrophy) — wait 4-6h or do on rest days."},
-  {id:"sauna", emoji:"🔥", name:"Sauna / Heat", color:"var(--red)",
-   what:"Heat stress drives cardiovascular adaptation, growth hormone, and heat-shock proteins. Linked to lower all-cause mortality.",
-   how:"15-20 min at 174-212°F. 4+ sessions/week shows the biggest longevity association in the Finnish studies.",
-   when:"Post-workout is great (unlike cold). Evening sauna can improve sleep."},
-  {id:"sun", emoji:"☀️", name:"Morning Sunlight", color:"var(--gold)",
-   what:"Sets your circadian clock, anchors melatonin timing ~16h later, boosts daytime mood and energy.",
-   how:"5-10 min of outdoor light within 30-60 min of waking (no sunglasses). Cloudy day: 15-20 min.",
-   when:"First thing. The single highest-leverage free biohack for sleep + energy."},
-  {id:"fast", emoji:"⏳", name:"Time-Restricted Eating", color:"var(--teal)",
-   what:"Eating in a compressed window improves insulin sensitivity, may aid fat loss and cellular cleanup (autophagy).",
-   how:"Common: 16:8 (eat in 8h window). Start 12:12, tighten gradually. Keep protein high in the window for muscle.",
-   when:"Pick a window that fits training — don't train fasted hard if it tanks performance. Black coffee/water/electrolytes are fine fasted."},
-  {id:"breath", emoji:"🌬️", name:"Breathwork", color:"var(--violet)",
-   what:"Down-regulates stress (parasympathetic), improves HRV, focus, and recovery. Physiological sigh drops stress fast.",
-   how:"Box breathing 4-4-4-4 for 5 min, OR physiological sigh (double inhale, long exhale) ×5 when stressed.",
-   when:"Pre-sleep, between work blocks, or before a heavy lift to center. Anytime stress spikes."},
-  {id:"ground", emoji:"🌱", name:"Grounding / Walk", color:"var(--green)",
-   what:"Barefoot contact + low-intensity movement aids circulation, mood, and recovery. A daily walk is wildly underrated.",
-   how:"10-30 min walk daily, ideally outdoors. Barefoot on grass/sand a few min if available.",
-   when:"Post-meal walks blunt glucose spikes. Morning walk + sunlight stacks two protocols at once."},
-  {id:"sleep", emoji:"🌙", name:"Sleep Hygiene", color:"var(--violet)",
-   what:"The foundation everything else sits on. Recovery, hormones, muscle growth, cognition all depend on it.",
-   how:"Cool dark room (65-68°F), no screens 30-60 min before bed, consistent sleep/wake time, no caffeine after ~2pm.",
-   when:"Every night. If you fix one thing, fix this — it's your stated highest-leverage area."},
-  {id:"supps", emoji:"💊", name:"Core Supplements", color:"var(--gold)",
-   what:"The few with strong evidence for a lifter: creatine, vitamin D, omega-3, magnesium. Most others are noise.",
-   how:"Creatine 5g/day (any time). Vitamin D3 if low. Omega-3 (EPA/DHA). Magnesium glycinate at night for sleep.",
-   when:"Creatine daily regardless of training. Consistency matters more than timing. Get bloodwork to confirm D levels."},
+const AYURVEDA={
+ intro:"Ayurveda reads the body through three energies (doshas): Vata (air/space — movement, dry, light), Pitta (fire/water — heat, drive, sharp), Kapha (earth/water — heavy, steady, stable). Most people lean toward one or two. The practices below are the steadiest, most evidence-friendly habits — paired with the Western read so you can test them like everything else. Complementary wellness, not medical treatment.",
+ items:[
+  {n:"Warm lemon water on waking",when:"Morning",what:"Mug of warm water + half a lemon before anything else.",west:"Hydration after a night's fast + a gentle digestive nudge. Low-risk, easy win."},
+  {n:"Tongue scraping",when:"Morning",what:"Scrape front-to-back a few times before brushing.",west:"Removes bacterial film, freshens breath; modest evidence for lowering bacteria load."},
+  {n:"Abhyanga (self-oil massage)",when:"AM / pre-shower",what:"Warm sesame or coconut oil into the skin, sit 5–10 min, then shower.",west:"Parasympathetic down-shift (warmth + touch), skin-barrier support. Genuinely calming."},
+  {n:"Largest meal at midday",when:"Midday",what:"Make lunch the biggest meal when 'digestive fire' (agni) is strongest.",west:"Matches circadian metabolism — daytime eating handles glucose better than late nights."},
+  {n:"Ginger before meals",when:"Pre-meal",what:"A few slices of fresh ginger with a pinch of salt to 'spark agni'.",west:"Ginger is well-supported for nausea, gastric emptying, and digestion."},
+  {n:"CCF tea (cumin-coriander-fennel)",when:"Anytime",what:"½ tsp each, steeped — the classic digestive tea.",west:"Carminative spices ease bloating; warm fluid aids digestion. Pleasant and safe."},
+  {n:"Golden milk (turmeric)",when:"Evening",what:"Warm milk + turmeric + black pepper + a little fat, before bed.",west:"Curcumin is anti-inflammatory; piperine boosts absorption. Calming ritual."},
+  {n:"Ashwagandha",when:"Evening",what:"Adaptogen traditionally taken to steady the nervous system.",west:"Decent evidence for stress/cortisol and sleep. Check interactions; caution with thyroid meds."},
+  {n:"Triphala",when:"Evening",what:"Three-fruit blend traditionally for gut regularity.",west:"Mild laxative/antioxidant effects. Start low; clear with a doctor."},
+  {n:"Early, lighter dinner",when:"Evening",what:"Finish eating 2–3h before bed; keep dinner lighter than lunch.",west:"Protects sleep and overnight recovery; supports circadian eating."},
+ ]
+};
+const BIOHACKS=[
+ {id:"sun",n:"Morning Sunlight",time:"Morning",ev:"Strong",desc:"10–20 min direct outdoor light within ~30–60 min of waking, no sunglasses.",benefits:["Anchors circadian rhythm","Healthy morning cortisol → energy","Better sleep ~16h later","Mood / dopamine"],caution:"Never look at the sun. Overcast → go longer.",stacks:["Delayed caffeine","Cold exposure","Breathwork"]},
+ {id:"caf",n:"Delayed Caffeine",time:"Morning",ev:"Moderate",desc:"Wait ~90–120 min after waking before caffeine to dodge the mid-morning crash.",benefits:["Smoother energy curve","Less afternoon slump","Protects adenosine clearance"],caution:"Cut caffeine 8–10h before bed.",stacks:["L-Theanine","Morning sunlight"]},
+ {id:"theanine",n:"Caffeine + L-Theanine",time:"Morning",ev:"Strong",desc:"100–200mg L-theanine with caffeine — your clean focus stack.",benefits:["Calm, jitter-free focus","Smooths caffeine edge","Great pre-ritual or deep work"],caution:"Skip late in day if it disrupts sleep.",stacks:["Delayed caffeine","Deep work / ritual"]},
+ {id:"cold",n:"Cold Exposure",time:"Morning",ev:"Moderate",desc:"1–3 min cold shower or plunge — uncomfortably cold but safe.",benefits:["Long-tail dopamine (hours)","Resilience / stress inoculation","Alertness","Recovery"],caution:"Avoid right after hypertrophy training — separate 4–6h.",stacks:["Breathwork","Morning sunlight","Sauna (contrast)"]},
+ {id:"breath",n:"Breathwork",time:"Anytime",ev:"Strong",desc:"Box breathing to settle; cyclic sighing to calm fast; Wim-Hof rounds to activate.",benefits:["Down-regulates stress on demand","Raises focus","Bridges into pranayama / gnosis"],caution:"Never breath-hold in/near water or while driving.",stacks:["Cold exposure","Pranayama","Pre-ritual"]},
+ {id:"creatine",n:"Creatine Monohydrate",time:"Anytime",ev:"Strong",desc:"5g daily, timing-agnostic. The most-studied supplement that exists.",benefits:["Strength & power","Muscle fullness","Cognitive support"],caution:"Stay hydrated. Mono is the only form worth paying for.",stacks:["Post-workout meal","Hydration"]},
+ {id:"d3",n:"Vitamin D3 + K2",time:"Morning",ev:"Strong",desc:"D3 with K2 (MK-7) and a meal with fat.",benefits:["Immune, mood, hormonal support","K2 directs calcium to bone"],caution:"Test your level; dose to target.",stacks:["Omega-3","Morning meal"]},
+ {id:"mag",n:"Magnesium Glycinate",time:"Evening",ev:"Moderate",desc:"200–400mg glycinate 30–60 min before bed.",benefits:["Sleep quality & latency","Nervous-system down-regulation","Recovery"],caution:"Glycinate is gentle; citrate/oxide can loosen stools.",stacks:["Evening wind-down","No-screens","Golden milk"]},
+ {id:"omega",n:"Omega-3 (EPA/DHA)",time:"Anytime",ev:"Strong",desc:"~2–3g combined EPA+DHA daily with food.",benefits:["Anti-inflammatory","Cardio & cognitive support","Mood"],caution:"Buy third-party tested for oxidation.",stacks:["D3 + K2","Meals"]},
+ {id:"zone2",n:"Zone 2 Cardio",time:"Anytime",ev:"Strong",desc:"30–60 min easy — conversational, nose-breathing.",benefits:["Mitochondrial density","Aerobic base / recovery","Metabolic health"],caution:"Keep it truly easy.",stacks:["Fasted (optional)","Outdoor sunlight"]},
+ {id:"sauna",n:"Sauna / Heat",time:"Evening",ev:"Moderate",desc:"15–20 min, ~4× per week if available.",benefits:["Cardiovascular conditioning","Heat-shock proteins","Relaxation / sleep"],caution:"Hydrate; not right after strength if chasing growth.",stacks:["Cold (contrast)","Evening wind-down"]},
+ {id:"walk",n:"Walk After Meals",time:"Anytime",ev:"Strong",desc:"10–15 min easy walk after eating, especially the biggest meal.",benefits:["Blunts blood-sugar spike","Aids digestion","Adds daily steps painlessly"],caution:"None — pure upside.",stacks:["Zone 2","Sunlight"]},
+ {id:"electro",n:"Electrolytes",time:"Anytime",ev:"Moderate",desc:"Sodium/potassium/magnesium, especially if low-carb, training hard, or in the sauna.",benefits:["Energy & cramping","Hydration that absorbs","Headache prevention"],caution:"Mind total sodium with BP issues.",stacks:["Training","Sauna","Fasting"]},
+ {id:"ground",n:"Grounding + Light Walk",time:"Morning",ev:"Emerging",desc:"Barefoot on grass/earth + morning light together.",benefits:["Mood & calm (light is the proven driver)","Movement","Nature exposure"],caution:"Evidence for 'earthing' itself is thin — sunlight + walk is the real lever.",stacks:["Morning sunlight","Walk after meals"]},
+ {id:"nasal",n:"Nasal Breathing",time:"Anytime",ev:"Moderate",desc:"Breathe through the nose by default — training, sleep, all day.",benefits:["Better CO2 tolerance & calm","Filters/humidifies air","May improve sleep"],caution:"Mouth-taping only if you've ruled out sleep apnea.",stacks:["Zone 2","Sleep hygiene","Pranayama"]},
+ {id:"trf",n:"Time-Restricted Eating",time:"Anytime",ev:"Moderate",desc:"Eat inside an 8–10h window. Harder to grow on — widen it when bulking.",benefits:["Metabolic flexibility","Fewer decisions","Circadian alignment"],caution:"You're trying to GROW — prioritize total calories over a tight window.",stacks:["Zone 2 (fasted)","Morning sunlight"]},
+ {id:"nsdr",n:"NSDR / Yoga Nidra",time:"Anytime",ev:"Moderate",desc:"10–20 min non-sleep deep rest — guided body scan.",benefits:["Recovers focus mid-day","Replenishes dopamine","Lowers stress","Bridge to visualization"],caution:"Not a sleep replacement.",stacks:["Midday reset","Yoga Nidra practice"]},
+ {id:"ashwa",n:"Ashwagandha",time:"Evening",ev:"Moderate",desc:"Adaptogen for stress; commonly taken in the evening.",benefits:["Cortisol / stress","Sleep","Possible strength/recovery edge"],caution:"Check interactions; caution with thyroid meds. Cycle it.",stacks:["Magnesium","Golden milk","Sleep hygiene"]},
+ {id:"sunset",n:"Digital Sunset",time:"Evening",ev:"Strong",desc:"Screens off / dim + warm light 60–90 min before bed.",benefits:["Protects melatonin","Faster sleep onset","Calmer mind"],caution:"If you must use screens, go dark/warm/dim.",stacks:["Magnesium","Sleep hygiene","Golden milk"]},
+ {id:"sleep",n:"Sleep Hygiene",time:"Evening",ev:"Strong",desc:"Dim 1–2h before bed, cool dark room, consistent wake time.",benefits:["The master recovery & cognition lever","Hormonal regulation","Everything compounds off it"],caution:"Fixed WAKE time matters more than bedtime.",stacks:["Magnesium","Digital sunset","Morning sunlight"]},
 ];
-
-const NUTRITION_DEFAULTS = { calories:3100, protein:175, carbs:340, fat:80 };
-const COMMON_FOODS = [
-  {n:"Chicken breast (6oz)", c:280, p:52, cb:0, f:6},
-  {n:"Whey shake (1 scoop)", c:120, p:25, cb:3, f:1},
-  {n:"Whole eggs (3)", c:215, p:19, cb:1, f:15},
-  {n:"White rice (1 cup)", c:205, p:4, cb:45, f:0},
-  {n:"Ground beef 90/10 (6oz)", c:310, p:46, cb:0, f:14},
-  {n:"Greek yogurt (1 cup)", c:150, p:25, cb:9, f:0},
-  {n:"Oatmeal (1 cup)", c:300, p:10, cb:54, f:5},
-  {n:"Banana", c:105, p:1, cb:27, f:0},
-  {n:"Peanut butter (2 tbsp)", c:190, p:8, cb:7, f:16},
-  {n:"Salmon (6oz)", c:350, p:40, cb:0, f:20},
-  {n:"Sweet potato (medium)", c:115, p:2, cb:27, f:0},
-  {n:"Protein bar", c:220, p:20, cb:23, f:7},
+const TRADITIONS=[
+ {id:"wc",n:"Western Ceremonial",intro:"The Golden Dawn / hermetic-qabalistic stream you already train in — Kraig's Modern Magick lives here. Built on banishing, the Middle Pillar, and the Tree of Life. Disciplined, structured, repeatable. Your home base.",learn:["Kraig — Modern Magick","Regardie — The Golden Dawn","DuQuette — The Magick of Aleister Crowley"]},
+ {id:"em",n:"Eastern Meditation",intro:"Concentration and insight — the training of attention itself, which every other practice runs on. Posture, breath, then the mind. Pairs directly with your nervous-system and gnosis work.",learn:["Culadasa — The Mind Illuminated","Ingram — Mastering the Core Teachings of the Buddha","B. Alan Wallace — The Attention Revolution"]},
+ {id:"yoga",n:"Yoga",intro:"Strength and breath as a vehicle — asana to build the body, pranayama to dial the nervous system, holds as moving meditation. Where your physical and metaphysical training meet.",learn:["Iyengar — Light on Yoga","Saradananda — The Power of Breath","Breath & Flow (YouTube)"]},
+ {id:"herm",n:"Hermeticism",intro:"The philosophical bedrock beneath Western magick: the Emerald Tablet and the seven principles of the Kybalion. Less ritual, more a lens for reality and a contemplative path. 'As above, so below' is its heart — and this app's.",learn:["The Kybalion (Three Initiates)","The Emerald Tablet","Hauck — The Emerald Tablet"]},
+ {id:"chaos",n:"Chaos Magick",intro:"The pragmatic, results-first paradigm — exactly your stated approach. Belief is a tool you pick up and put down. Sigils, gnosis states, and 'whatever works.' Founded on Austin Osman Spare's sigil method.",learn:["Carroll — Liber Null & Psychonaut","Spare — The Book of Pleasure","Hine — Condensed Chaos"]},
+ {id:"alch",n:"Alchemy",intro:"The Great Work as inner transformation — 'solve et coagula,' dissolve and recombine the self. The magnum opus (nigredo → albedo → rubedo) maps onto individuation and shadow work. Symbolic, deep, slow.",learn:["The Emerald Tablet","Jung — Psychology and Alchemy","Hauck — Sorcerer's Stone"]},
+ {id:"norse",n:"Norse / Runic",intro:"Working with the Elder Futhark — runes as both an alphabet and a system of forces. Rune meditation, galdr (vibrated chanting), and bindrunes. A grounded, earthy Western current.",learn:["Thorsson — Futhark","Paxson — Taking Up the Runes","The Poetic Edda (Hávamál)"]},
+ {id:"hellenic",n:"Hellenic / Theurgy",intro:"Greek devotional and Neoplatonic magic — daily devotion, hymns, and theurgy (the 'work of the gods' aimed at union with the divine). Iamblichus is the key source.",learn:["Iamblichus — On the Mysteries","The Orphic / Homeric Hymns","Butler — essays on Platonism"]},
+ {id:"hoodoo",n:"Hoodoo / Folk Magic",intro:"African American folk magic of the American South — rootwork, candle and herb craft, practical 'conjure' aimed at real-life results. A living tradition rooted in Black history and community; approach with respect for its origins, not as aesthetic.",learn:["Yronwode — Hoodoo Herb and Root Magic","Chireau — Black Magic (history)","Best learned from its own practitioners"],respect:"A culturally rooted tradition born of African American history and enslavement. Study its context first; don't strip it for aesthetics."},
+ {id:"vodou",n:"Vodou (educational)",intro:"Haitian Vodou is a complete, organized religion — service to the lwa within a community, under initiation by a houngan or mambo, with deep African (Fon/Dahomey) and Catholic roots. It is NOT a solo pick-up practice, and pop-culture 'voodoo' is mostly distortion. Presented here as study and respect, not instruction.",learn:["McCarthy Brown — Mama Lola","Maya Deren — Divine Horsemen","Only through initiated community, never appropriation"],respect:"A living initiatory religion, not a technique. The respectful path is learning its real history and theology — and if ever drawn to it, through legitimate initiated community."},
 ];
-</script>
-<script>
-// ============================================================
-// STORAGE + HELPERS
-// ============================================================
-const DB={get(k,f){try{const v=localStorage.getItem('vital_'+k);return v?JSON.parse(v):f;}catch{return f;}},set(k,v){try{localStorage.setItem('vital_'+k,JSON.stringify(v));return true;}catch{return false;}}};
-function epley(w,r){return (w>0&&r>0)?Math.round(w*(1+r/30)*10)/10:0;}
-function todayISO(){return new Date().toISOString().slice(0,10);}
-function prettyDate(iso){const d=new Date(iso+'T12:00:00');return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});}
-function nowStamp(){return new Date().toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});}
-function esc(s){return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2200);}
-
-// custom splits the user builds
-function getCustomSplits(){return DB.get('customSplits',[]);}
-function allSplits(){return [YOUR_SPLIT, ...getCustomSplits(), ...SPLIT_LIBRARY];}
-function findSplit(id){return allSplits().find(s=>s.id===id);}
-
-// training history
-function getHistory(){return DB.get('history',[]);}
-function setHistory(h){DB.set('history',h);}
-function lastPerf(exName){
-  const hist=getHistory();let best=null;
-  for(const s of hist)for(const set of s.sets)if(set.ex===exName){
-    if(!best||s.date>best.date) best={date:s.date,w:set.w,reps:set.reps,e1rm:set.e1rm};
+const PRACTICES=[
+ {id:"qc",trad:"Western Ceremonial",n:"Qabalistic Cross",dur:"3 min",purpose:"Centering rite that sets you on the Middle Pillar. The opening of nearly every ceremonial working.",steps:["Face east, breathe until settled. Imagine brilliant white light above your crown.","Draw it to your forehead, touch it, vibrate Ah-teh (Thou art).","Draw it down to the chest, point down, vibrate Mal-kooth (the Kingdom).","Touch the right shoulder, vibrate ve-Geboo-rah (and the Power).","Touch the left shoulder, vibrate ve-Ged-oo-lah (and the Glory).","Clasp hands at the chest, vibrate le-Oh-lahm, Ah-men — feel the cross of light alive in you."],note:"Vibrate so you feel it resonate in the body. The seed of the Middle Pillar."},
+ {id:"lbrp",trad:"Western Ceremonial",n:"Lesser Banishing Ritual of the Pentagram",dur:"10 min",purpose:"Clears and seals your space and sphere. Your daily foundation — banishing builds discipline before you ever invoke.",steps:["Perform the Qabalistic Cross to center.","Facing east, trace a banishing earth pentagram, stab the center, vibrate YHVH.","Carry the line south, trace, vibrate ADNI (Adonai).","West, trace, vibrate AHIH (Eheieh).","North, trace, vibrate AGLA. Return to east, closing the circle of fire.","Arms wide: before you Raphael, behind Gabriel, right Michael, left Auriel.","Declare the pentagrams flaming around you, the six-rayed star within. Close with the Qabalistic Cross."],note:"Daily for 30+ days before judging it. Consistency is the point — the rite trains the will."},
+ {id:"mp",trad:"Western Ceremonial",n:"Middle Pillar",dur:"12 min",purpose:"Builds and circulates energy through your central column. Your charging / vitality rite.",steps:["Stand erect, breathe slow, begin with the Qabalistic Cross.","Crown (Kether): brilliant white sphere above the head — vibrate Eheieh.","Throat (Daath): lavender sphere — vibrate YHVH Elohim.","Heart (Tiphareth): golden sphere — vibrate YHVH Eloah ve-Daath.","Pelvis (Yesod): violet sphere — vibrate Shaddai El Chai.","Feet (Malkuth): earth-black sphere — vibrate Adonai ha-Aretz.","Circulate the light down one side, up the other, front to back, then fountain it up the center and shower down."],note:"Turns banishing-discipline into felt energy. Pair it with breath."},
+ {id:"lbrh",trad:"Western Ceremonial",n:"Hexagram Ritual",dur:"12 min",purpose:"Works with planetary / macrocosmic forces (hexagram = higher, pentagram = elemental). Follows pentagram mastery.",steps:["Open with the Qabalistic Cross and usually the LBRP.","Perform the Analysis of the Keyword (I.N.R.I. / the L-V-X signs).","At each quarter, trace the hexagram forms, vibrating ARARITA.","Hold the planetary force at the center of each hexagram.","Close with the Analysis of the Keyword and the Qabalistic Cross."],note:"Only take this up once the pentagram rituals are stable and daily."},
+ {id:"tarot",trad:"Western Ceremonial",n:"Tarot Contemplation Ritual",dur:"20 min",purpose:"Pathworking / scrying a single card — the Tarot as a living door, not a fortune-telling deck.",steps:["Banish (LBRP) and settle the breath. Choose one card.","Study it openly — colors, figures, symbols, the feeling.","Eyes closed, rebuild the image until vivid and stable.","Let the card expand to a doorway; step through in vision and let the scene unfold.","Interact, ask, receive — stay the witness, note without grabbing.","Return through the door, close it, banish, and immediately journal everything."],note:"Always journal straight after — the record is where meaning crystallizes. Your active-imagination bridge."},
+ {id:"asana",trad:"Eastern Meditation",n:"Asana (Seated Posture)",dur:"5 min",purpose:"The still, comfortable seat. The body must learn stillness before the mind can be trained.",steps:["Sit cross-legged or on a chair, spine tall but not rigid, hips above knees.","Crown lifts, chin tucks slightly, shoulders drop, hands easy.","Scan for tension, release it on each exhale.","Hold without fidgeting for the set time — stillness itself is the practice."],note:"Patanjali: posture steady and comfortable. Master the seat and meditation becomes possible."},
+ {id:"nadi",trad:"Eastern Meditation",n:"Nadi Shodhana (Alternate Nostril)",dur:"6 min",purpose:"Balancing pranayama that settles the system and primes the mind for focus or ritual.",steps:["Sit tall, right thumb and ring finger ready.","Close right nostril, inhale slow through the left.","Close left, release right, exhale right.","Inhale right, close, exhale left — that's one round.","5–10 smooth, silent rounds; then sit in the stillness it leaves."],note:"Pranayama is the dial between calm and charged states — the engine of gnosis."},
+ {id:"samatha",trad:"Eastern Meditation",n:"Samatha (Breath Concentration)",dur:"15 min",purpose:"Single-pointed focus on the breath. Builds the attentional stability everything else draws on.",steps:["Settle the posture, three deeper breaths, then natural breathing.","Rest attention on the breath at the nostrils.","When the mind wanders, notice gently and return — the returning IS the rep.","As focus steadies, follow the full arc of each breath."],note:"The Mind Illuminated maps this in 10 stages. Catching the wander is the training, not the failure."},
+ {id:"vipa",trad:"Eastern Meditation",n:"Vipassana (Noting)",dur:"15 min",purpose:"Open awareness and clear seeing — watching experience arise and pass to loosen identification.",steps:["A few minutes of breath to stabilize.","Widen attention to whatever's most prominent.","Softly note it ('hearing', 'thinking', 'tightness') and watch it change.","Don't chase or suppress; observe the flow. Return to breath if overwhelmed."],note:"The direct insight track — pairs with shadow work and the witness stance."},
+ {id:"surya",trad:"Yoga",n:"Sun Salutation (Strength Flow)",dur:"10 min",purpose:"Breath-linked strength and mobility. Warms the body and builds the pushing base.",steps:["Mountain pose, inhale arms up.","Exhale fold; inhale half-lift, flat back.","Exhale step back to plank; lower through chaturanga with control.","Inhale upward dog; exhale downward dog, five breaths.","Step forward, half-lift, fold, rise. Repeat 5–10 rounds."],note:"Treat chaturanga like a strict push-up rep. Link every move to a breath."},
+ {id:"strflow",trad:"Yoga",n:"Strength Asana Hold Flow",dur:"15 min",purpose:"Isometric strength through long holds — chair, warrior, plank — with breath and intention.",steps:["Chair (30–45s), warrior II each side, plank and side plank holds.","In each hold, breathe steady and place one intention in the body.","Use discomfort as the meditation object — stay present instead of escaping.","Finish in a deep squat or child's pose, releasing the effort."],note:"Where 'magickal meditation' meets strength — holding intention under load."},
+ {id:"nidra",trad:"Yoga",n:"Yoga Nidra (Magickal Visualization)",dur:"20 min",purpose:"Yogic sleep — deep rest at the edge of consciousness, ideal for sigil charging and visualization.",steps:["Lie in savasana, fully comfortable, eyes closed.","Rotate awareness through the body part by part, releasing each.","Drop to the hypnagogic borderland — stay just on the waking side.","Hold your image or intention lightly there, then let it go entirely.","Rest, return slowly, and record anything that arose."],note:"The borderland bypasses the censor while you're still awake enough to direct it."},
+ {id:"emerald",trad:"Hermeticism",n:"Emerald Tablet Contemplation",dur:"15 min",purpose:"Sit with the foundational hermetic text line by line, drawing out its meaning for your own work.",steps:["Settle and read one line slowly (e.g. 'as above, so below').","Close your eyes and let the meaning unfold without forcing.","Ask: where is this true in my body, mind, and life right now?","Move to the next line only when the first has given something.","Journal the insight in your own words."],note:"Contemplation, not ritual — depth over speed. One or two lines per session is plenty."},
+ {id:"sevenp",trad:"Hermeticism",n:"The Seven Principles Review",dur:"10 min",purpose:"Run your day through the Kybalion's seven principles as a diagnostic lens.",steps:["Mentalism — what was I holding in mind, and what did it create?","Correspondence — where did inner mirror outer today?","Vibration — what was my dominant state?","Polarity — where could I shift a thing toward its opposite pole?","Rhythm — what cycle am I in (up, down, building, resting)?","Cause & Effect — what did I set in motion? Cause or effect?","Gender — where did I need more receptive vs. active energy?"],note:"A weekly run of this builds a genuinely hermetic way of seeing."},
+ {id:"porebreath",trad:"Hermeticism",n:"Vital-Energy Breathing",dur:"8 min",purpose:"Bardon-style energy work — breathing in vitality and accumulating it in the body.",steps:["Sit erect, relaxed, breathe slow and natural.","On each inhale, imagine drawing in light/vitality from all around.","Feel it gather and condense in the body (often the solar plexus).","On the exhale, let tension and dullness leave.","After several minutes, sense the charge, then ground it — feet to earth."],note:"A gentle, foundational energy practice — close cousin to the Middle Pillar's circulation."},
+ {id:"sigil",trad:"Chaos Magick",n:"Sigil Creation & Launch",dur:"15 min",purpose:"Spare's method — encode a desire into a glyph, charge it in gnosis, then forget it.",steps:["Write a clear statement of intent ('IT IS MY WILL TO…').","Strike repeated letters; combine what remains into one abstract glyph.","Refine until it no longer reads as words — just form.","Enter gnosis (peak arousal or deep stillness) and burn the glyph into mind.","Release it — laugh, distract, forget. Log it in the journal and DON'T lust for the result."],note:"The forgetting is the technique. Your pragmatic, results-testing streak lives here."},
+ {id:"gnosis",trad:"Chaos Magick",n:"Gnosis State Training",dur:"10 min",purpose:"Train the altered states that charge any working — both the still (inhibitory) and the peak (excitatory).",steps:["Inhibitory: fix the eyes on a point, slow the breath, still the body until thought thins.","Hold the blank, single-pointed state as long as you can.","Excitatory (separate session): fast breath, drumming, or movement to a peak.","At the peak or in the stillness — that's the window to charge a sigil.","Note which comes easier and train the weaker one."],note:"Two doors to the same room. Pranayama and meditation are the same engine."},
+ {id:"solve",trad:"Alchemy",n:"Solve et Coagula (Shadow Dissolution)",dur:"20 min",purpose:"The alchemical operation applied to the self — dissolve a fixed pattern, then recombine it higher.",steps:["Name one rigid pattern in yourself (the 'prima materia').","Solve — dissolve it: examine it honestly, feel it fully, let its grip soften (nigredo).","Sit in the openness that follows (albedo).","Coagula — recombine: choose the new, conscious response in its place (rubedo).","Journal the operation like a lab note in your magnum opus."],note:"Alchemy is individuation in symbolic dress. Real inner work, slow by design."},
+ {id:"rune",trad:"Norse / Runic",n:"Rune Meditation & Galdr",dur:"12 min",purpose:"Take a single Elder Futhark rune into stillness, then sound it (galdr) to feel its force.",steps:["Choose one rune (Fehu, Uruz, Ansuz…). Study its shape and meanings.","Hold its form in the mind's eye until stable.","Galdr — vibrate/chant its name slowly, feeling where it resonates.","Hold its quality as a felt sense, not just an idea.","Journal what it evoked; build a personal rune record over time."],note:"Like the Tarot ritual — turn a symbol into a living, felt force through attention and voice."},
+ {id:"devotion",trad:"Hellenic / Theurgy",n:"Daily Devotion",dur:"8 min",purpose:"A simple Neoplatonic/Hellenic rhythm — gratitude, offering, and aspiration toward the divine.",steps:["At a small space or candle, settle and purify (a breath, a splash of water).","Offer a moment of gratitude or short words of praise.","Make a simple offering (incense, water, words) with full attention.","Aspire — turn the mind upward toward the Good (theurgy's real aim is union, not bargaining).","Close with thanks and carry the orientation into the day."],note:"Theurgy is elevation of the soul, not transaction. Keep it sincere and simple."},
+];
+const pracById=id=>PRACTICES.find(p=>p.id===id);
+const LENSES=["Jungian","IFS","Stoic","8-Circuit (RAW)","Hermetic","Eastern"];
+const MIND=[
+ {id:"shadow",lens:"Jungian",n:"The Shadow",body:"Everything about yourself you've disowned and pushed out of awareness — not just the 'dark,' but any quality you judged unacceptable. What you can't stand in others is often your own shadow projected. Integration isn't acting it out; it's owning it so it stops running you from the basement.",practice:"List three people who irritate you intensely. Name the exact trait. Where does that live in me?",prompt:"What did I react to today out of proportion — and what might it show me about myself?"},
+ {id:"active",lens:"Jungian",n:"Active Imagination",body:"Jung's method of dialoguing with the unconscious — letting an image or figure take form and engaging it as autonomous. Structurally identical to scrying and pathworking: drop into vision, meet a figure, let it speak. The discipline is staying witness, not steering with the ego.",practice:"Sit with a strong emotion or dream image. Let it personify. Ask what it wants. Write the exchange unedited.",prompt:"If today's strongest feeling could speak, what would it say it needs?"},
+ {id:"persona",lens:"Jungian",n:"The Persona",body:"The mask you wear for the world — the curated self that meets social expectations. Useful and necessary, but dangerous when you mistake it for who you are. Over-identifying with the persona leaves the real self starved and the shadow swollen.",practice:"Name the mask you wore most today. What did it hide? What would dropping it have cost — and gained?",prompt:"Where am I performing a self instead of being one?"},
+ {id:"individ",lens:"Jungian",n:"Individuation",body:"The lifelong process of becoming who you actually are — integrating shadow, anima/animus, and archetypes around the organizing center Jung called the Self. The psychological mirror of the Great Work: turning raw, scattered material into a unified, conscious whole.",practice:"Name one part of yourself you've been performing vs. one you've been hiding. What would integrating them look like?",prompt:"Am I moving toward who I am, or who I think I'm supposed to be?"},
+ {id:"synch",lens:"Jungian",n:"Synchronicity",body:"Jung's term for meaningful coincidence — events linked by meaning rather than cause. Whether you read it as the psyche pattern-matching or as something stranger, treating striking coincidences as worth noting (without forcing meaning) is a doorway between inner and outer that magicians and Jung both walk.",practice:"Note one coincidence this week that carried a charge. What was happening inside you when it landed?",prompt:"What has reality seemed to underline for me lately?"},
+ {id:"parts",lens:"IFS",n:"Parts & Self",body:"IFS sees the psyche as a system of parts: Managers (keep you functioning/controlled), Firefighters (douse pain reactively — numbing, lashing out), Exiles (young wounded parts carrying the original pain). Beneath them is the Self — calm, curious, compassionate. Healing is the Self getting to know the parts instead of being hijacked.",practice:"Notice a strong reaction. Which part is this? What is it protecting you from? Thank it.",prompt:"Which part drove most of today — and what was it afraid would happen if it let go?"},
+ {id:"8cs",lens:"IFS",n:"The 8 C's of Self",body:"You're in Self when you feel the 8 C's: Calm, Curiosity, Clarity, Compassion, Confidence, Courage, Creativity, Connectedness. A live diagnostic — if you're blended with a part, one goes missing. Maps onto the magician's witness and the meditator's equanimity: the still center that observes parts without becoming them.",practice:"Rate each C 1–5 right now. The lowest shows which part is most active.",prompt:"Where was I in Self today, and where was I blended?"},
+ {id:"unburden",lens:"IFS",n:"Unburdening",body:"In IFS, exiles carry 'burdens' — extreme beliefs and feelings taken on during painful moments ('I'm worthless,' 'I'm unsafe'). Healing is the Self witnessing the exile, letting it tell its story, and helping it release a burden it never had to carry. With a therapist, it's some of the deepest work there is.",practice:"Notice one harsh belief you carry about yourself. How old does it feel? That's likely an exile's burden, not the truth.",prompt:"What old belief have I mistaken for a fact about myself?"},
+ {id:"ifs-jung",lens:"IFS",n:"IFS ↔ Jung ↔ Magick",body:"Three dialects for the same terrain. IFS 'parts' ≈ Jung's complexes/sub-personalities ≈ the magician's invoked forces and god-forms. Self ≈ the Jungian Self ≈ the witness / Holy Guardian Angel. Active imagination, parts dialogue, and pathworking are the same move: a conscious conversation with autonomous inner contents. Run them as one practice with your therapist, not three competing ones.",practice:"Take one inner figure. Describe it three ways — as a part, a complex, a force. Notice what each reveals.",prompt:"What inner figure keeps showing up across my therapy, journal, and practice?"},
+ {id:"control",lens:"Stoic",n:"The Dichotomy of Control",body:"Epictetus' hinge: some things are up to us (judgments, choices, effort, attention) and some are not (outcomes, other people, the past). Suffering comes from gripping what isn't ours. Power and peace come from pouring everything into what is, and releasing the rest.",practice:"Take what's stressing you. Draw a line: my part vs. not my part. Act fully on the first; release the second.",prompt:"What did I waste energy trying to control today that was never mine?"},
+ {id:"premed",lens:"Stoic",n:"Premeditatio Malorum",body:"The calm rehearsal of what could go wrong — not to breed anxiety but to defuse it and prepare. Face loss and difficulty in imagination ahead of time and you rob misfortune of its shock, and discover most fears shrink under examination.",practice:"Pick one upcoming challenge. Vividly imagine the worst plausible version, then plan your response. Notice the calm.",prompt:"What am I quietly afraid of — and what's my actual plan if it happens?"},
+ {id:"amor",lens:"Stoic",n:"Amor Fati",body:"'Love of fate' — not just accepting what happens but willing it, treating every event, even the hard ones, as fuel and as exactly what was needed. The opposite of the victim stance. Nietzsche borrowed it from the Stoics and made it a battle cry.",practice:"Take one thing you've been resenting. Try on: 'this is mine, and I can use it.' What changes?",prompt:"What am I resisting that I could choose to use instead?"},
+ {id:"memento",lens:"Stoic",n:"Memento Mori",body:"Remember you will die. Not morbid — clarifying. The certainty of death is the Stoic's sharpest tool for cutting through trivia and acting on what matters now. It's also the alchemist's nigredo and the magician's confrontation with the Abyss.",practice:"If this were your last year, what would you stop tolerating and start doing? Name one of each.",prompt:"Did I spend today on what matters, knowing it's finite?"},
+ {id:"evening",lens:"Stoic",n:"Seneca's Evening Review",body:"Seneca ended each day interrogating it: what did I do well, badly, and could do better? Done honestly and without self-flagellation, it's the original journaling-for-growth — and it directly targets inconsistency and self-deception by making the day examinable.",practice:"Three questions tonight: where did I act from values? from impulse? what's the one adjustment for tomorrow?",prompt:"If I reviewed today honestly, with no spin, what would I have to admit?"},
+ {id:"circuits",lens:"8-Circuit (RAW)",n:"The 8-Circuit Model",body:"Wilson's map (via Leary): 1 Bio-survival (safe/threatened), 2 Emotional-territorial (status/power), 3 Semantic (language/logic), 4 Socio-sexual (rules/morality) — the four terrestrial circuits we mostly run on. Then the higher: 5 Neurosomatic (bliss/body), 6 Neuroelectric (meta-programming), 7 Neurogenetic (archetypal/collective), 8 Non-local (the mystical). Magick and meditation are tools to access and re-program the upper circuits.",practice:"Which lower circuit is loudest right now — fear? status? logic-loops? guilt? Just name it.",prompt:"Which circuit ran the show today — did I choose it, or did it choose me?"},
+ {id:"tunnels",lens:"8-Circuit (RAW)",n:"Reality Tunnels & 'Sombunall'",body:"Nobody perceives reality directly — everyone lives in a 'reality tunnel' built from their nervous system, language, and conditioning. The freeing move is agnosticism toward your own certainties: hold beliefs as tools, not truths. Wilson coined 'sombunall' (some-but-not-all) to break the brain's habit of false universals. The meta-skill behind your whole pragmatic approach.",practice:"Take a belief you're certain of. State it as 'In my current reality tunnel, X.' Feel it loosen.",prompt:"What did I treat as 'just the way it is' today that's actually just my tunnel?"},
+ {id:"exercise",lens:"8-Circuit (RAW)",n:"The Prometheus Exercise",body:"Wilson assigned exercises to break automatic perception — e.g. spend a week deliberately hunting for evidence the world is improving, then a week hunting for decline, and watch how your nervous system manufactures whatever you look for. The point: you program your own reality tunnel whether you know it or not.",practice:"For the next 24h, hunt only for evidence that things are working in your favor. Log what you find.",prompt:"What did I find when I went looking for the good — and what does that say about attention?"},
+ {id:"mentalism",lens:"Hermetic",n:"Mentalism",body:"'The All is Mind; the universe is mental.' The first hermetic principle — mind as the fundamental substrate, which is why attention, intention, and imagination are treated as causal in magick. Whatever your metaphysics, the pragmatic version is undeniable: where attention goes, energy flows.",practice:"Notice the dominant image you hold about your future. Is it the one you'd choose to install?",prompt:"What am I repeatedly imagining — and is it building the life I want?"},
+ {id:"asabove",lens:"Hermetic",n:"As Above, So Below",body:"The Emerald Tablet's axiom: macrocosm and microcosm mirror each other — outer and inner, cosmos and psyche, ritual and life. Practically: your inner work shows up in your outer life and back again. Discipline in the body becomes discipline in the will; chaos in the mind leaks into the day. This app is built on it — body below, spirit above, one column between.",practice:"Find today's mirror: where did an inner state show up as an outer event, or vice versa?",prompt:"What is my outer life currently reflecting about my inner state?"},
+ {id:"polarity",lens:"Hermetic",n:"Polarity & Rhythm",body:"Two hermetic principles working together. Polarity: opposites are two ends of one thing (love/hate, courage/fear are degrees on a scale), so you can shift along it. Rhythm: everything moves in cycles — the pendulum swings both ways. Knowing the rhythm lets you ride the down-swings without despair and the up-swings without arrogance.",practice:"Name your current emotional pole and its opposite. Then name the cycle you're in. Where's the pendulum?",prompt:"What pole am I stuck at that I could consciously shift — and what rhythm am I inside?"},
+ {id:"tao",lens:"Eastern",n:"Wu Wei (Effortless Action)",body:"The Taoist art of not-forcing — acting with the grain of things rather than against it. Not passivity, but the skill of water wearing down stone: yielding, timing, flow. The antidote to a crisis-driven, white-knuckle pattern — sustainable practice is wu wei, not force.",practice:"Find one place today you're forcing. What would 'going with the grain' look like there instead?",prompt:"Where am I pushing against the current when I could be using it?"},
+ {id:"anatta",lens:"Eastern",n:"Anatta & Impermanence",body:"Two of Buddhism's core marks: anatta (non-self — no fixed, solid 'you,' just a flowing process) and anicca (impermanence — everything arises and passes). Seen directly in meditation, they loosen the grip of ego and the fear of loss. They rhyme with IFS's 'no single self' and the magician's fluid identity.",practice:"Watch one thought arise and pass without grabbing it. Were you the thought, or the space it appeared in?",prompt:"What am I clinging to as permanent or as 'me' that's actually just passing through?"},
+];
+const QUIZZES={
+ "Magick Foundations":[
+  {q:"In the LBRP, which element/archangel stands behind you (west)?",a:["Raphael — Air","Gabriel — Water","Michael — Fire","Auriel — Earth"],c:1},
+  {q:"The Qabalistic Cross establishes you on which structure?",a:["The Hexagram","The Middle Pillar","The Rose Cross","The Abyss"],c:1},
+  {q:"The pentagram works with ___ forces; the hexagram with ___ forces.",a:["planetary / elemental","elemental / planetary","solar / lunar","fixed / mutable"],c:1},
+  {q:"After the Tarot contemplation ritual you should immediately:",a:["Sleep","Record everything in the journal","Re-shuffle the deck","Repeat the vision"],c:1},
+  {q:"Which sphere sits at the crown in the Middle Pillar?",a:["Tiphareth","Yesod","Kether","Malkuth"],c:2},
+ ],
+ "Traditions":[
+  {q:"Chaos magick's defining stance is that belief is:",a:["Sacred and fixed","A tool to pick up and put down","Irrelevant","Always literal"],c:1},
+  {q:"Haitian Vodou is best described as:",a:["A solo DIY practice","An organized initiatory religion","A branch of Wicca","Pop-culture fiction"],c:1},
+  {q:"The sigil method of encoding desire into a glyph comes from:",a:["Aleister Crowley","Austin Osman Spare","Dion Fortune","Iamblichus"],c:1},
+  {q:"'Solve et coagula' is the motto of:",a:["Norse runework","Alchemy","Stoicism","Theurgy"],c:1},
+  {q:"Galdr, in the Norse tradition, refers to:",a:["A type of rune","Vibrated/chanted sound","A god","A festival"],c:1},
+  {q:"Theurgy (Neoplatonic) primarily aims at:",a:["Material wealth","Union with / elevation toward the divine","Cursing enemies","Weather control"],c:1},
+ ],
+ "Jungian & IFS":[
+  {q:"What you can't stand in others is often a projection of your own:",a:["Anima","Shadow","Persona","Self"],c:1},
+  {q:"In IFS, the calm compassionate core beneath all parts is the:",a:["Manager","Exile","Self","Firefighter"],c:2},
+  {q:"Active imagination most resembles which magickal practice?",a:["Banishing","Scrying / pathworking","Sigil destruction","Divination by lot"],c:1},
+  {q:"An IFS part that numbs or lashes out reactively is a:",a:["Manager","Firefighter","Exile","Self"],c:1},
+  {q:"Jung's term for becoming who you truly are is:",a:["Integration","Individuation","Transcendence","Sublimation"],c:1},
+  {q:"The curated mask you show the world is the:",a:["Shadow","Persona","Anima","Self"],c:1},
+ ],
+ "Stoicism":[
+  {q:"Epictetus' dichotomy of control says peace comes from:",a:["Controlling outcomes","Focusing only on what's up to us","Avoiding all desire","Predicting the future"],c:1},
+  {q:"Premeditatio malorum is the practice of:",a:["Forgiving enemies","Rehearsing what could go wrong","Daily gratitude","Fasting"],c:1},
+  {q:"'Amor fati' means:",a:["Fear of death","Love of fate","Love of wisdom","Control of anger"],c:1},
+  {q:"'Memento mori' is meant to:",a:["Cause despair","Clarify what matters now","Predict death","Honor ancestors"],c:1},
+ ],
+ "8-Circuit & Hermetics":[
+  {q:"Which is one of RAW's four 'terrestrial' circuits?",a:["Neurosomatic","Bio-survival","Non-local","Neurogenetic"],c:1},
+  {q:"'Sombunall' means:",a:["All of it","None of it","Some-but-not-all","Maybe"],c:2},
+  {q:"A 'reality tunnel' is:",a:["A meditation technique","Each person's constructed model of reality","A ritual space","An astral plane"],c:1},
+  {q:"'The All is Mind' is which hermetic principle?",a:["Correspondence","Mentalism","Rhythm","Polarity"],c:1},
+  {q:"The principle of Polarity says opposites are:",a:["Unrelated","Two ends of the same thing","Always equal","Illusions"],c:1},
+ ],
+ "Body & Biohacks":[
+  {q:"Best time for sunlight to anchor circadian rhythm:",a:["Before bed","Within ~30–60 min of waking","Only at noon","Anytime"],c:1},
+  {q:"Cold exposure is best avoided right after which training, to protect growth?",a:["Zone 2","Hypertrophy / strength","Mobility","Skill work"],c:1},
+  {q:"Protein per lb of bodyweight for muscle growth is roughly:",a:["0.2–0.3g","0.8–1.0g","2.0–2.5g","Doesn't matter"],c:1},
+  {q:"The single most-studied performance supplement is:",a:["BCAAs","Creatine monohydrate","Glutamine","Test boosters"],c:1},
+  {q:"For sleep, what matters more than a fixed bedtime?",a:["Fixed wake time","Eating late","A warm room","Screen brightness"],c:0},
+  {q:"A kettlebell swing is driven by:",a:["A squat","An explosive hip hinge","The arms","The knees"],c:1},
+ ],
+};
+const INSIGHTS=[
+ {t:"You have power over your mind — not outside events. Realize this, and you will find strength.",by:"Marcus Aurelius"},
+ {t:"The privilege of a lifetime is to become who you truly are.",by:"Carl Jung"},
+ {t:"The map is not the territory; the menu is not the meal.",by:"Robert Anton Wilson"},
+ {t:"As above, so below; as within, so without.",by:"The Emerald Tablet"},
+ {t:"Discipline is choosing between what you want now and what you want most.",by:"—"},
+ {t:"You are not the voice of the mind — you are the one who hears it.",by:"Michael Singer"},
+ {t:"He who has a why to live can bear almost any how.",by:"Nietzsche"},
+ {t:"The wound is the place where the Light enters you.",by:"Rumi"},
+ {t:"Water is fluid, soft, and yielding. But water will wear away rock.",by:"Lao Tzu"},
+ {t:"What we plant in contemplation, we reap in the harvest of action.",by:"Meister Eckhart"},
+];
+function App(){
+  const [tab,setTab]=useStored("vital.tab","home");
+  const [log,setLog]=useStored("vital.log",[]);
+  const [mySplits,setMySplits]=useStored("vital.mysplits",[]);
+  const [customEx,setCustomEx]=useStored("vital.customex",[]);
+  const [framework,setFramework]=useStored("vital.framework",[]);
+  const [profile,setProfile]=useStored("vital.profile",{bw:185,goal:"grow",act:"active"});
+  const [scores,setScores]=useStored("vital.scores",{});
+  const [foodLog,setFoodLog]=useStored("vital.foodlog",{});
+  const [flash,setFlash]=useState("");
+  const ping=(m)=>{setFlash(m);setTimeout(()=>setFlash(""),2200);};
+  const addLog=(entry)=>{setLog(l=>[{id:uid(),ts:new Date().toISOString(),...entry},...l]);ping("Saved to Journal");};
+  const streak=useMemo(()=>{
+    const days=new Set(log.map(e=>e.ts.slice(0,10)));
+    Object.keys(foodLog).forEach(d=>{if(foodLog[d]&&foodLog[d].length)days.add(d);});
+    let n=0,d=new Date();
+    while(days.has(d.toISOString().slice(0,10))){n++;d.setDate(d.getDate()-1);}
+    return n;
+  },[log,foodLog]);
+  const allEx=useMemo(()=>[...customEx,...EX],[customEx]);
+  const exById=(id)=>allEx.find(e=>e.id===id)||{id,n:id,p:"—",cat:"—",cue:""};
+  const ctx={log,setLog,addLog,mySplits,setMySplits,customEx,setCustomEx,allEx,exById,framework,setFramework,profile,setProfile,scores,setScores,foodLog,setFoodLog,ping,streak,setTab};
+  const NAV=[
+    {k:"home",ic:"☉",l:"Today"},{k:"train",ic:"⚔",l:"Train"},{k:"fuel",ic:"🜂",l:"Fuel"},
+    {k:"bio",ic:"🜔",l:"Hacks"},{k:"practice",ic:"☿",l:"Practice"},{k:"mind",ic:"🜍",l:"Mind"},
+    {k:"journal",ic:"📖",l:"Journal"},{k:"test",ic:"✦",l:"Test"},
+  ];
+  return (
+   <div className="app">
+     <header className="hdr">
+       <div className="brand"><h1>VITAL</h1><span className="sub">as above, so below</span></div>
+       <div className="streak">🔥 {streak} day{streak===1?"":"s"}</div>
+     </header>
+     {tab==="home"&&<Home ctx={ctx}/>}
+     {tab==="train"&&<Train ctx={ctx}/>}
+     {tab==="fuel"&&<Fuel ctx={ctx}/>}
+     {tab==="bio"&&<Bio ctx={ctx}/>}
+     {tab==="practice"&&<Practice ctx={ctx}/>}
+     {tab==="mind"&&<Mind ctx={ctx}/>}
+     {tab==="journal"&&<Journal ctx={ctx}/>}
+     {tab==="test"&&<Test ctx={ctx}/>}
+     {flash&&<div className="flash">{flash}</div>}
+     <nav className="nav"><div className="navwrap">
+       {NAV.map(n=>(<a key={n.k} className={tab===n.k?"on":""} onClick={()=>setTab(n.k)}><span className="ic">{n.ic}</span>{n.l}</a>))}
+     </div></nav>
+   </div>
+  );
+}
+function targets(profile){
+  const bw=Number(profile.bw)||185;
+  const factor=profile.act==="active"?16:(profile.act==="mod"?15:13);
+  const maint=Math.round(bw*factor);
+  const adj=profile.goal==="grow"?400:(profile.goal==="lean"?-400:0);
+  const cal=maint+adj;const pro=Math.round(bw*0.9);
+  const fat=Math.round(cal*0.25/9);const carb=Math.round((cal-(pro*4)-(fat*9))/4);
+  return {bw,maint,cal,pro,fat,carb,adj};
+}
+function TypeTag({t}){
+  const map={workout:["tr","Train"],meal:["fu","Fuel"],practice:["pr","Practice"],mind:["mi","Mind"],quiz:["qz","Test"],free:["fr","Journal"],biohack:["bh","Hack"]};
+  const [c,l]=map[t]||["fr",t];return <span className={"tag "+c}>{l}</span>;
+}
+function Home({ctx}){
+  const ins=INSIGHTS[new Date().getDate()%INSIGHTS.length];
+  const todayLogs=ctx.log.filter(e=>e.ts.slice(0,10)===today());
+  const counts=todayLogs.reduce((a,e)=>{a[e.type]=(a[e.type]||0)+1;return a;},{});
+  const food=(ctx.foodLog[today()]||[]);
+  const proToday=food.reduce((a,f)=>a+(f.pro||0),0);
+  const t=targets(ctx.profile);
+  return (
+   <div className="page">
+     <p className="eyebrow">The Temple · {fmtDate(today())}</p>
+     <h2 className="h-title">Today's Working</h2>
+     <p className="h-sub">One column runs from body to spirit. Touch it once a day and the streak takes care of the rest.</p>
+     <div className="card flat" style={{background:"linear-gradient(180deg,rgba(236,230,214,.06),transparent)",borderColor:"rgba(194,160,79,.25)"}}>
+       <div className="quote">"{ins.t}"<span className="by">— {ins.by}</span></div>
+     </div>
+     <div className="pillar" style={{marginBottom:14}}>
+       <div className="node"><div className="dot"></div><div className="lab">SPIRIT</div><div className="val">{counts.practice||0} practice · {counts.mind||0} mind</div></div>
+       <div className="node mid"><div className="dot"></div><div className="lab">MIND</div><div className="val">{ctx.streak}-day streak · {ctx.framework.length} in framework</div></div>
+       <div className="node below"><div className="dot"></div><div className="lab">BODY</div><div className="val">{counts.workout||0} train · {proToday}/{t.pro}g protein</div></div>
+     </div>
+     <p className="eyebrow" style={{marginTop:18}}>Quick Log</p>
+     <div className="grid2">
+       <button className="btn" onClick={()=>ctx.setTab("practice")}>☿ Begin a Practice</button>
+       <button className="btn" onClick={()=>ctx.setTab("train")}>⚔ Start a Workout</button>
+       <button className="btn" onClick={()=>ctx.setTab("fuel")}>🜂 Track Food</button>
+       <button className="btn" onClick={()=>ctx.setTab("mind")}>🜍 Mind Lens</button>
+     </div>
+     {todayLogs.length>0&&<>
+       <p className="eyebrow" style={{marginTop:20}}>Logged Today</p>
+       <div className="card">{todayLogs.slice(0,6).map(e=>(
+         <div className="li" key={e.id}><div><div className="t">{e.title}</div><div className="d">{fmtTime(e.ts)}</div></div><TypeTag t={e.type}/></div>))}</div>
+     </>}
+     {!Store.available&&<div className="note warn"><span className="pill" style={{color:"var(--warn)",borderColor:"rgba(201,151,75,.4)"}}>Preview mode</span>
+       <p className="muted" style={{fontSize:13,margin:"8px 0 0"}}>Saved entries last only this session here. Deploy Vital to your own site and everything persists on your device automatically.</p></div>}
+   </div>
+  );
+}
+function Train({ctx}){
+  const {exById,allEx}=ctx;
+  const [view,setView]=useState("splits");
+  const [active,setActive]=useState(null);
+  const [editMode,setEditMode]=useState(false);
+  const [done,setDone]=useState({});
+  const [picker,setPicker]=useState(null);
+  const [libCat,setLibCat]=useState("All");
+  const [showAddEx,setShowAddEx]=useState(false);
+  function openSplit(split){
+    const mine=ctx.mySplits.some(s=>s.id===split.id);
+    setActive({split:clone(split),dayIdx:0,sourceId:split.id,mine});
+    setDone({});setEditMode(false);setView("session");
   }
-  return best;
+  function commit(a){setActive({...a});}
+  function setDay(i){commit({...active,dayIdx:i});setDone({});}
+  function editItem(i,field,val){const a=clone(active);a.split.days[a.dayIdx].items[i][field]=val;commit(a);}
+  function removeItem(i){const a=clone(active);a.split.days[a.dayIdx].items.splice(i,1);commit(a);}
+  function doPick(exId){
+    const a=clone(active);const day=a.split.days[picker.dayIdx];
+    if(picker.mode==="swap")day.items[picker.itemIdx].ex=exId;
+    else day.items.push({ex:exId,sets:3,reps:"10"});
+    commit(a);setPicker(null);
+  }
+  function saveSplit(){
+    if(active.mine){ctx.setMySplits(s=>s.map(x=>x.id===active.sourceId?active.split:x));ctx.ping("Changes saved");}
+    else{const cs={...active.split,id:uid(),n:active.split.n+" (yours)"};ctx.setMySplits(s=>[cs,...s]);
+      setActive({...active,sourceId:cs.id,mine:true,split:cs});ctx.ping("Saved to My Splits");}
+  }
+  function finish(){
+    const day=active.split.days[active.dayIdx];
+    const items=day.items.map(it=>exById(it.ex).n+" "+it.sets+"×"+it.reps).join(", ");
+    ctx.addLog({type:"workout",title:active.split.n+" — "+day.n,body:items});
+    setView("splits");setActive(null);
+  }
+  return (
+   <div className="page">
+     <p className="eyebrow">Body · The Substrate</p>
+     <h2 className="h-title">Train</h2>
+     <p className="h-sub">Calisthenics, barbell, dumbbell, kettlebell, landmine, cardio, abs, functional. Every split is fully editable — add, remove, edit, swap — or build your own from scratch.</p>
+     {view!=="session"&&view!=="builder"&&<div className="seg">
+       <button className={view==="splits"?"on":""} onClick={()=>setView("splits")}>Splits</button>
+       <button className={view==="library"?"on":""} onClick={()=>setView("library")}>Exercise Library</button>
+     </div>}
+     {view==="splits"&&<>
+       <button className="btn verd full" onClick={()=>{setActive({split:{id:uid(),n:"",focus:"",days:[{n:"Day 1",items:[]}]},dayIdx:0,sourceId:null,mine:true,isNew:true});setView("builder");}}>＋ Build New Split</button>
+       {ctx.mySplits.length>0&&<p className="eyebrow" style={{marginTop:16}}>Your Splits</p>}
+       {ctx.mySplits.map(sp=><SplitCard key={sp.id} sp={sp} exById={exById} onOpen={openSplit} onDelete={()=>ctx.setMySplits(s=>s.filter(x=>x.id!==sp.id))}/>)}
+       <p className="eyebrow" style={{marginTop:ctx.mySplits.length?16:8}}>Library Programs</p>
+       {DEFAULT_SPLITS.map(sp=><SplitCard key={sp.id} sp={sp} exById={exById} onOpen={openSplit}/>)}
+     </>}
+     {view==="library"&&<>
+       <button className="btn full" onClick={()=>setShowAddEx(true)}>＋ Add Custom Exercise</button>
+       <div className="seg" style={{marginTop:12}}>
+         <button className={libCat==="All"?"on":""} onClick={()=>setLibCat("All")}>All</button>
+         {CATS.map(c=><button key={c} className={libCat===c?"on":""} onClick={()=>setLibCat(c)}>{c}</button>)}
+       </div>
+       <div className="card">
+         {allEx.filter(e=>libCat==="All"||e.cat===libCat).map(e=>(
+           <div className="li" key={e.id}>
+             <div style={{flex:1}}><div className="t">{e.n}{e.custom&&<span className="pill verd" style={{marginLeft:8}}>yours</span>}</div><div className="d">{e.cue}</div></div>
+             <div style={{textAlign:"right"}}><span className="pill ox">{e.p}</span><div className="faint" style={{fontSize:11,marginTop:4}}>{e.cat}</div></div>
+           </div>
+         ))}
+       </div>
+     </>}
+     {view==="builder"&&active&&<Builder active={active} setActive={setActive} setPicker={setPicker} exById={exById}
+        onCancel={()=>{setView("splits");setActive(null);}}
+        onSave={()=>{if(!active.split.n.trim()){ctx.ping("Name your split first");return;}
+          ctx.setMySplits(s=>[active.split,...s]);ctx.ping("Split created");setView("splits");setActive(null);}}/>}
+     {view==="session"&&active&&(()=>{const day=active.split.days[active.dayIdx];return <>
+       <button className="btn ghost sm" onClick={()=>{setView("splits");setActive(null);}}>← Back</button>
+       {active.split.days.length>1&&<div className="seg" style={{marginTop:12}}>
+         {active.split.days.map((d,i)=><button key={i} className={active.dayIdx===i?"on":""} onClick={()=>setDay(i)}>{d.n}</button>)}
+       </div>}
+       <div className="card" data-acc="ox" style={{marginTop:12}}>
+         <div className="between">
+           <div><p className="eyebrow" style={{margin:0}}>{active.split.n}</p><h3 className="serif" style={{fontSize:24,margin:"2px 0"}}>{day.n}</h3></div>
+           <button className={"btn xs "+(editMode?"verd":"")} onClick={()=>setEditMode(!editMode)}>{editMode?"Done":"Edit"}</button>
+         </div>
+         <hr className="divider"/>
+         {day.items.length===0&&<p className="muted center" style={{fontSize:13}}>No movements yet — tap “Add exercise”.</p>}
+         {day.items.map((it,i)=>{const ex=exById(it.ex);return (
+           <div className="li" key={i}>
+             {!editMode&&<button onClick={()=>setDone(d=>({...d,[i]:!d[i]}))} style={{flex:"none",width:26,height:26,borderRadius:8,border:"1px solid var(--line)",background:done[i]?"var(--gold)":"transparent",color:"var(--night)",fontWeight:800}}>{done[i]?"✓":""}</button>}
+             {editMode&&<button className="xbtn" onClick={()=>removeItem(i)}>×</button>}
+             <div style={{flex:1}}>
+               <div className="t" style={{textDecoration:done[i]&&!editMode?"line-through":"none",opacity:done[i]&&!editMode?.5:1}}>{ex.n}</div>
+               {!editMode&&<div className="d">{it.sets} × {it.reps} · {ex.cue}</div>}
+               {editMode&&<div className="row" style={{gap:6,marginTop:6}}>
+                 <input className="in mini" style={{width:56}} value={it.sets} onChange={e=>editItem(i,"sets",e.target.value)} placeholder="sets"/>
+                 <span className="faint" style={{alignSelf:"center"}}>×</span>
+                 <input className="in mini" style={{width:96}} value={it.reps} onChange={e=>editItem(i,"reps",e.target.value)} placeholder="reps"/>
+               </div>}
+             </div>
+             {!editMode&&<button className="btn xs ghost" onClick={()=>setPicker({mode:"swap",dayIdx:active.dayIdx,itemIdx:i,pattern:ex.p})}>Swap</button>}
+           </div>
+         );})}
+         <button className="btn sm full" style={{marginTop:12}} onClick={()=>setPicker({mode:"add",dayIdx:active.dayIdx,pattern:null})}>＋ Add exercise</button>
+         <div className="row" style={{marginTop:10}}>
+           <button className="btn gold full" onClick={finish}>Finish &amp; Log</button>
+           <button className="btn" onClick={saveSplit}>{active.mine?"Save":"Save as mine"}</button>
+         </div>
+       </div>
+     </>;})()}
+     {picker&&<Sheet onClose={()=>setPicker(null)} title={picker.mode==="swap"?"Swap exercise":"Add exercise"}>
+       <ExPicker allEx={allEx} initialPattern={picker.pattern} onPick={doPick}/>
+     </Sheet>}
+     {showAddEx&&<AddExercise onClose={()=>setShowAddEx(false)} onAdd={(ex)=>{ctx.setCustomEx(c=>[{...ex,id:uid(),custom:true},...c]);ctx.ping("Exercise added");setShowAddEx(false);}}/>}
+   </div>
+  );
 }
-function bestE1RM(exName){const hist=getHistory();let b=0;for(const s of hist)for(const set of s.sets)if(set.ex===exName&&set.e1rm>b)b=set.e1rm;return b;}
-
-// nutrition log: {date:[{n,c,p,cb,f}]}
-function getFoodDay(d){return DB.get('food_'+d,[]);}
-function setFoodDay(d,arr){DB.set('food_'+d,arr);}
-function getTargets(){return DB.get('targets',NUTRITION_DEFAULTS);}
-
-// biohack daily check: {date:[ids]}
-function getChecks(d){return DB.get('bh_'+d,[]);}
-function setChecks(d,arr){DB.set('bh_'+d,arr);}
-function bhStreak(id){
-  let streak=0;for(let i=0;i<400;i++){const d=new Date(Date.now()-i*86400000).toISOString().slice(0,10);if(getChecks(d).includes(id))streak++;else if(i>0)break;}return streak;
+function SplitCard({sp,onOpen,onDelete,exById}){
+  return (
+   <div className="card" data-acc="ox">
+     <div className="between"><div><h3 className="serif" style={{fontSize:21,margin:0}}>{sp.n}</h3><div className="muted" style={{fontSize:13}}>{sp.focus}</div></div>
+       {onDelete&&<button className="btn xs ghost danger" onClick={onDelete}>Remove</button>}</div>
+     <hr className="divider"/>
+     {sp.days.map((d,i)=>(<div className="li" key={i}><div style={{flex:1,minWidth:0}}><div className="t">{d.n}</div><div className="d" style={{whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{d.items.length} movements · {d.items.slice(0,3).map(it=>exById(it.ex).n).join(", ")}{d.items.length>3?"…":""}</div></div>
+       <button className="btn sm" onClick={()=>onOpen(sp,i)}>Open</button></div>))}
+   </div>
+  );
 }
-
-// body metrics: array {date, weight, sleep, energy, waist, arms, chest, thigh, notes}
-function getBody(){return DB.get('body',[]);}
-function setBody(b){DB.set('body',b);}
-</script>
-<script>
-// ============================================================
-// ROUTER
-// ============================================================
-let tab=DB.get('tab','today');
-let trainView='picker';   // picker | splitdays | log | stats | builder
-let activeSplit=null, activeDay=null, draft={};
-
-const TABS=[
-  {id:'today',label:'Today',ic:'◎'},
-  {id:'train',label:'Train',ic:'🏋️'},
-  {id:'fuel',label:'Fuel',ic:'🍽'},
-  {id:'biohack',label:'Biohack',ic:'⚡'},
-  {id:'body',label:'Body',ic:'📊'},
-];
-function render(){
-  document.getElementById('app').innerHTML=`
-    <div class="top">
-      <h1><span class="mark">✦</span> Vital</h1>
-      <button class="icon-btn" onclick="openData()">⋯</button>
+function ExPicker({allEx,initialPattern,onPick}){
+  const [pat,setPat]=useState(initialPattern||"All");
+  const list=allEx.filter(e=>pat==="All"||e.p===pat);
+  return <>
+    {initialPattern&&<p className="muted" style={{fontSize:13,marginTop:0}}>Filtered to <b>{initialPattern}</b> movements — switch below for all.</p>}
+    <div className="seg"><button className={pat==="All"?"on":""} onClick={()=>setPat("All")}>All</button>
+      {PATTERNS.map(p=><button key={p} className={pat===p?"on":""} onClick={()=>setPat(p)}>{p}</button>)}</div>
+    {list.map(e=>(<button key={e.id} className="opt" onClick={()=>onPick(e.id)}><strong>{e.n}</strong> <span className="faint">· {e.cat} · {e.lv}</span><br/><span className="muted" style={{fontSize:12.5}}>{e.cue}</span></button>))}
+  </>;
+}
+function AddExercise({onClose,onAdd}){
+  const [n,setN]=useState("");const [cat,setCat]=useState("Dumbbell");const [p,setP]=useState("Push");const [cue,setCue]=useState("");
+  return <Sheet onClose={onClose} title="Add Custom Exercise">
+    <span className="lbl">Name</span><input className="in" value={n} onChange={e=>setN(e.target.value)} placeholder="e.g. Incline Cable Fly"/>
+    <div className="grid2" style={{marginTop:12}}>
+      <div><span className="lbl">Category</span><select className="in" value={cat} onChange={e=>setCat(e.target.value)}>{CATS.map(c=><option key={c}>{c}</option>)}</select></div>
+      <div><span className="lbl">Pattern</span><select className="in" value={p} onChange={e=>setP(e.target.value)}>{PATTERNS.map(x=><option key={x}>{x}</option>)}</select></div>
     </div>
-    <div class="tabbar">
-      ${TABS.map(t=>`<button class="${tab===t.id?'on':''}" onclick="go('${t.id}')"><span class="ic">${t.ic}</span>${t.label}</button>`).join('')}
+    <span className="lbl" style={{marginTop:12}}>Cue (optional)</span><input className="in" value={cue} onChange={e=>setCue(e.target.value)} placeholder="Form reminder"/>
+    <button className="btn gold full" style={{marginTop:14}} disabled={!n.trim()} onClick={()=>onAdd({n:n.trim(),cat,p,lv:"Custom",cue:cue.trim()||"—"})}>Add to Library</button>
+  </Sheet>;
+}
+function Builder({active,setActive,setPicker,exById,onCancel,onSave}){
+  function set(o){setActive({...o});}
+  function addDay(){const a=clone(active);a.split.days.push({n:"Day "+(a.split.days.length+1),items:[]});set(a);}
+  function removeDay(i){const a=clone(active);a.split.days.splice(i,1);if(a.dayIdx>=a.split.days.length)a.dayIdx=0;set(a);}
+  function rename(i,v){const a=clone(active);a.split.days[i].n=v;set(a);}
+  function removeItem(di,ii){const a=clone(active);a.split.days[di].items.splice(ii,1);set(a);}
+  function editItem(di,ii,f,v){const a=clone(active);a.split.days[di].items[ii][f]=v;set(a);}
+  return <>
+    <button className="btn ghost sm" onClick={onCancel}>← Cancel</button>
+    <div className="card" data-acc="verd" style={{marginTop:12}}>
+      <span className="lbl">Split name</span><input className="in" value={active.split.n} onChange={e=>set({...active,split:{...active.split,n:e.target.value}})} placeholder="e.g. My PPL"/>
+      <span className="lbl" style={{marginTop:12}}>Focus / note</span><input className="in" value={active.split.focus} onChange={e=>set({...active,split:{...active.split,focus:e.target.value}})} placeholder="e.g. 6-day hypertrophy"/>
     </div>
-    <main id="main">${panel()}</main>`;
-}
-function go(id){tab=id;DB.set('tab',id);if(id==='train')trainView='picker';document.getElementById('main').innerHTML=panel();document.querySelectorAll('.tabbar button').forEach((b,i)=>b.classList.toggle('on',TABS[i].id===id));window.scrollTo(0,0);}
-function refresh(){document.getElementById('main').innerHTML=panel();}
-function panel(){
-  if(tab==='today')return todayPanel();
-  if(tab==='train')return trainPanel();
-  if(tab==='fuel')return fuelPanel();
-  if(tab==='biohack')return biohackPanel();
-  if(tab==='body')return bodyPanel();
-}
-</script>
-<script>
-// ============================================================
-// TODAY — dashboard
-// ============================================================
-function todayPanel(){
-  const d=todayISO();
-  const hist=getHistory();
-  const lastSession=hist.length?hist[hist.length-1]:null;
-  const food=getFoodDay(d), t=getTargets();
-  const cal=food.reduce((a,x)=>a+(x.c||0),0), pro=food.reduce((a,x)=>a+(x.p||0),0);
-  const checks=getChecks(d);
-  const body=getBody();
-  const lastW=body.length?body[body.length-1].weight:null;
-  const hour=new Date().getHours();
-  const greet=hour<12?"Good morning":hour<18?"Good afternoon":"Good evening";
-  return `<div class="fade">
-    <div class="sec-title">${greet}, LaRon</div>
-    <div class="sec-sub">${prettyDate(d)} · Here's your day at a glance</div>
-
-    <div class="card" onclick="go('train')" style="cursor:pointer">
-      <div class="accent" style="background:var(--ember)"></div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700">Training</div>
-          <div style="font-size:17px;color:var(--white);font-weight:700;margin-top:3px">${lastSession?'Last: '+(findSplit(lastSession.split)?.days[lastSession.day]?'':'')+lastSession.day+' · '+prettyDate(lastSession.date):'Start your first session →'}</div>
+    {active.split.days.map((day,di)=>(
+      <div className="card" key={di}>
+        <div className="row" style={{gap:8}}><input className="in" value={day.n} onChange={e=>rename(di,e.target.value)}/>
+          {active.split.days.length>1&&<button className="xbtn" onClick={()=>removeDay(di)}>×</button>}</div>
+        <div style={{marginTop:8}}>
+          {day.items.map((it,ii)=>(<div className="li" key={ii}><button className="xbtn" onClick={()=>removeItem(di,ii)}>×</button>
+            <div style={{flex:1}}><div className="t">{exById(it.ex).n}</div>
+              <div className="row" style={{gap:6,marginTop:6}}>
+                <input className="in mini" style={{width:56}} value={it.sets} onChange={e=>editItem(di,ii,"sets",e.target.value)}/>
+                <span className="faint" style={{alignSelf:"center"}}>×</span>
+                <input className="in mini" style={{width:96}} value={it.reps} onChange={e=>editItem(di,ii,"reps",e.target.value)}/>
+              </div></div></div>))}
         </div>
-        <div style="font-size:22px">→</div>
+        <button className="btn sm full" style={{marginTop:10}} onClick={()=>setPicker({mode:"add",dayIdx:di,pattern:null})}>＋ Add exercise</button>
       </div>
-    </div>
-
-    <div class="card" onclick="go('fuel')" style="cursor:pointer">
-      <div class="accent" style="background:var(--teal)"></div>
-      <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:10px">Fuel Today</div>
-      <div class="macro-bar"><div class="top-l"><span class="nm">Protein</span><span class="v">${pro} / ${t.protein}g</span></div><div class="track"><div class="fill" style="width:${Math.min(100,pro/t.protein*100)}%;background:var(--rose)"></div></div></div>
-      <div class="macro-bar" style="margin-bottom:0"><div class="top-l"><span class="nm">Calories</span><span class="v">${cal} / ${t.calories}</span></div><div class="track"><div class="fill" style="width:${Math.min(100,cal/t.calories*100)}%;background:var(--teal)"></div></div></div>
-    </div>
-
-    <div class="grid2">
-      <div class="card" onclick="go('biohack')" style="cursor:pointer;margin-bottom:0">
-        <div class="accent" style="background:var(--gold)"></div>
-        <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700">Protocols</div>
-        <div style="font-size:30px;font-weight:800;color:var(--gold);margin-top:6px">${checks.length}<span style="font-size:15px;color:var(--muted)">/${BIOHACKS.length}</span></div>
-        <div style="font-size:11px;color:var(--muted);margin-top:2px">done today</div>
+    ))}
+    <button className="btn full" onClick={addDay}>＋ Add Day</button>
+    <button className="btn gold full" style={{marginTop:10}} onClick={onSave}>Create Split</button>
+  </>;
+}
+function Fuel({ctx}){
+  const [sub,setSub]=useState("track");
+  return (
+   <div className="page">
+     <p className="eyebrow">Body · Fuel to Grow</p>
+     <h2 className="h-title">Fuel</h2>
+     <p className="h-sub">Hit your protein, track every day, and build the week off meals, snacks, and preps — with an Ayurvedic layer for digestion and recovery.</p>
+     <div className="seg ox">
+       {[["track","Track"],["foods","Foods"],["meals","Meals & Prep"],["snacks","Snacks"],["ayur","Ayurveda"]].map(([k,l])=>
+         <button key={k} className={sub===k?"on":""} onClick={()=>setSub(k)}>{l}</button>)}
+     </div>
+     {sub==="track"&&<FuelTrack ctx={ctx}/>}
+     {sub==="foods"&&<FuelFoods ctx={ctx}/>}
+     {sub==="meals"&&<FuelMeals ctx={ctx}/>}
+     {sub==="snacks"&&<FuelSnacks ctx={ctx}/>}
+     {sub==="ayur"&&<FuelAyur/>}
+   </div>
+  );
+}
+function addFood(ctx,item){
+  const day=today();const fl={...ctx.foodLog};fl[day]=[...(fl[day]||[]),item];ctx.setFoodLog(fl);ctx.ping("Added to today");
+}
+function FuelTrack({ctx}){
+  const t=targets(ctx.profile);const {profile,setProfile}=ctx;
+  const day=today();const food=ctx.foodLog[day]||[];
+  const sum=food.reduce((a,f)=>({pro:a.pro+(f.pro||0),cal:a.cal+(f.cal||0),c:a.c+(f.c||0),f:a.f+(f.f||0)}),{pro:0,cal:0,c:0,f:0});
+  function remove(i){const fl={...ctx.foodLog};fl[day]=[...food];fl[day].splice(i,1);ctx.setFoodLog(fl);}
+  return <>
+    <div className="card" data-acc="ox">
+      <p className="eyebrow" style={{margin:0}}>Your Targets</p>
+      <div className="grid3" style={{marginTop:12}}>
+        <div><span className="lbl">Weight (lb)</span><input className="in" type="number" value={profile.bw} onChange={e=>setProfile(p=>({...p,bw:e.target.value}))}/></div>
+        <div><span className="lbl">Goal</span><select className="in" value={profile.goal} onChange={e=>setProfile(p=>({...p,goal:e.target.value}))}><option value="grow">Grow</option><option value="maintain">Maintain</option><option value="lean">Lean</option></select></div>
+        <div><span className="lbl">Activity</span><select className="in" value={profile.act} onChange={e=>setProfile(p=>({...p,act:e.target.value}))}><option value="active">Very active</option><option value="mod">Moderate</option><option value="light">Light</option></select></div>
       </div>
-      <div class="card" onclick="go('body')" style="cursor:pointer;margin-bottom:0">
-        <div class="accent" style="background:var(--violet)"></div>
-        <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700">Weight</div>
-        <div style="font-size:30px;font-weight:800;color:var(--violet);margin-top:6px">${lastW||'—'}<span style="font-size:15px;color:var(--muted)">${lastW?' lb':''}</span></div>
-        <div style="font-size:11px;color:var(--muted);margin-top:2px">${lastW?'latest':'log your first'}</div>
+      <hr className="divider"/>
+      <div className="grid2">
+        <div className="center"><div className="kpi ox">{t.cal}</div><div className="faint" style={{fontSize:11,letterSpacing:1}}>CAL TARGET</div></div>
+        <div className="center"><div className="kpi">{t.pro}g</div><div className="faint" style={{fontSize:11,letterSpacing:1}}>PROTEIN TARGET</div></div>
       </div>
+      <p className="muted" style={{fontSize:12,marginBottom:0,marginTop:10}}>Maintenance ≈ {t.maint} · eating {t.adj>0?"+"+t.adj:t.adj} to {profile.goal}. Carbs ~{t.carb}g · Fat ~{t.fat}g.</p>
     </div>
-  </div>`;
-}
-</script>
-<script>
-// ============================================================
-// TRAIN PILLAR
-// ============================================================
-function trainPanel(){
-  if(trainView==='log'&&activeSplit&&activeDay)return dayLogView();
-  if(trainView==='splitdays'&&activeSplit)return splitDaysView();
-  if(trainView==='stats')return statsView();
-  if(trainView==='builder')return builderView();
-  return splitPicker();
-}
-
-function splitPicker(){
-  const custom=getCustomSplits();
-  return `<div class="fade">
-    <div class="sec-title">Train</div>
-    <div class="sec-sub">Your split, the library, or build your own</div>
-
-    <div class="pick" onclick="openSplit('${YOUR_SPLIT.id}')" style="border-color:var(--ember)">
-      <div class="bar" style="background:var(--ember)"></div>
-      <span class="tag" style="background:var(--emberDim);color:var(--ember)">${YOUR_SPLIT.tag}</span>
-      <div class="nm" style="margin-top:6px"><span class="emoji">${YOUR_SPLIT.emoji}</span>${esc(YOUR_SPLIT.name)}</div>
-      <div class="meta">${Object.keys(YOUR_SPLIT.days).length} days · ${esc(YOUR_SPLIT.desc)}</div>
+    <div className="card" data-acc="ox">
+      <p className="eyebrow" style={{margin:"0 0 10px"}}>Today · {fmtDate(day)}</p>
+      <div className="between"><span className="muted" style={{fontSize:13}}>Protein</span><span style={{fontWeight:700,color:"var(--gold-soft)"}}>{sum.pro} / {t.pro}g</span></div>
+      <div className="bar" style={{margin:"6px 0 12px"}}><i style={{width:Math.min(100,t.pro?sum.pro/t.pro*100:0)+"%"}}/></div>
+      <div className="between"><span className="muted" style={{fontSize:13}}>Calories</span><span style={{fontWeight:700,color:"var(--ember-soft)"}}>{sum.cal} / {t.cal}</span></div>
+      <div className="bar" style={{margin:"6px 0 6px"}}><i style={{width:Math.min(100,t.cal?sum.cal/t.cal*100:0)+"%"}}/></div>
+      <div className="macro" style={{justifyContent:"space-between",marginTop:10}}><span><b>{sum.c}g</b> carbs</span><span><b>{sum.f}g</b> fat</span><span>{food.length} items</span></div>
+      <hr className="divider"/>
+      {food.length===0?<p className="muted center" style={{fontSize:13}}>Nothing logged yet. Add from <b>Foods</b>, <b>Meals</b>, or <b>Snacks</b>.</p>
+       :food.map((f,i)=>(<div className="li" key={i}><div style={{flex:1}}><div className="t" style={{fontSize:14}}>{f.name}</div><div className="macro"><b>{f.pro}g</b> pro · {f.cal} cal</div></div><button className="xbtn" onClick={()=>remove(i)}>×</button></div>))}
     </div>
-
-    ${custom.length?`<div class="sec-sub" style="margin:18px 0 8px;color:var(--teal);font-weight:700">YOUR CUSTOM SPLITS</div>`:''}
-    ${custom.map(s=>`<div class="pick" onclick="openSplit('${s.id}')" style="border-color:var(--teal)">
-      <div class="bar" style="background:var(--teal)"></div>
-      <span class="tag" style="background:var(--tealDim);color:var(--teal)">CUSTOM</span>
-      <div class="nm" style="margin-top:6px"><span class="emoji">${s.emoji||'🛠'}</span>${esc(s.name)}</div>
-      <div class="meta">${Object.keys(s.days).length} days · tap to train · long list? edit below</div>
-      <button class="btn-add" style="margin-top:10px;color:var(--red);border-color:var(--redDim)" onclick="event.stopPropagation();delCustom('${s.id}')">Delete split</button>
-    </div>`).join('')}
-
-    <div class="sec-sub" style="margin:18px 0 8px">LIBRARY · PROVEN SPLITS</div>
-    ${SPLIT_LIBRARY.map(s=>`<div class="pick" onclick="openSplit('${s.id}')" style="border-color:${s.color}55">
-      <div class="bar" style="background:${s.color}"></div>
-      <span class="tag" style="background:var(--deep);color:${s.color}">${s.tag}</span>
-      <div class="nm" style="margin-top:6px"><span class="emoji">${s.emoji}</span>${esc(s.name)}</div>
-      <div class="meta">${esc(s.desc)}</div>
-    </div>`).join('')}
-
-    <button class="btn btn-teal btn-full" style="margin-top:14px" onclick="trainView='builder';refresh();">🛠 Build a New Split</button>
-    <button class="btn btn-ghost btn-full" style="margin-top:10px" onclick="trainView='stats';refresh();">📈 View Stats & PRs</button>
-  </div>`;
+  </>;
 }
-
-function openSplit(id){activeSplit=id;trainView='splitdays';refresh();window.scrollTo(0,0);}
-
-function splitDaysView(){
-  const s=findSplit(activeSplit);
-  if(!s){trainView='picker';return splitPicker();}
-  const dayNames=Object.keys(s.days);
-  return `<div class="fade">
-    <button class="back-link" onclick="trainView='picker';refresh();">‹ All splits</button>
-    <div class="sec-title">${s.emoji} ${esc(s.name)}</div>
-    <div class="sec-sub">${esc(s.desc||'')} · Pick today's day</div>
-    ${dayNames.map(dn=>{
-      const exs=s.days[dn];
-      return `<div class="pick" onclick="startDay('${activeSplit}','${dn.replace(/'/g,"\\'")}')" style="border-color:${s.color}55">
-        <div class="bar" style="background:${s.color}"></div>
-        <div class="nm">${esc(dn)}</div>
-        <div class="meta">${exs.length} exercises</div>
-      </div>`;
-    }).join('')}
-  </div>`;
-}
-
-function startDay(splitId,dayName){
-  activeSplit=splitId;activeDay=dayName;draft={};
-  findSplit(splitId).days[dayName].forEach(e=>{draft[e.n]=[{w:'',reps:''}];});
-  trainView='log';refresh();window.scrollTo(0,0);
-}
-
-function dayLogView(){
-  const s=findSplit(activeSplit);const exs=s.days[activeDay];
-  return `<div class="fade">
-    <button class="back-link" onclick="trainView='splitdays';refresh();">‹ ${esc(s.name)}</button>
-    <div class="sec-title">${esc(activeDay)}</div>
-    <div class="sec-sub">Purple = last time. Beat it. Tap an exercise to log.</div>
-    ${exs.map((e,i)=>exCard(e,i)).join('')}
-    <button class="btn btn-green btn-full" style="margin-top:6px" onclick="saveSession()">✓ Save Session</button>
-    <button class="btn-add" style="margin-top:12px;border-style:solid" onclick="trainView='splitdays';refresh();">Cancel</button>
-  </div>`;
-}
-
-function exCard(e,idx){
-  const last=lastPerf(e.n);
-  const sets=draft[e.n]||[{w:'',reps:''}];
-  const lastPill=last?`<span class="last-pill">⟲ ${last.w||'BW'}×${last.reps}${last.e1rm?' · '+last.e1rm:''}</span>`:`<span class="last-pill none">No history — set baseline</span>`;
-  return `<div class="ex-card" id="card-${idx}">
-    <div class="ex-head" onclick="toggleCard(${idx})">
-      <div><div class="nm">${e.sh?'<span class="warn">⚠</span> ':''}${esc(e.n)}</div><div>${lastPill}</div></div>
-      <div class="chev">›</div>
+function FuelFoods({ctx}){
+  const [cat,setCat]=useState("All");const [showAdd,setShowAdd]=useState(false);
+  const cats=["All",...Array.from(new Set(FOODS.map(f=>f.cat)))];
+  return <>
+    <button className="btn full" onClick={()=>setShowAdd(true)}>＋ Add Custom Food</button>
+    <div className="seg ox" style={{marginTop:12}}>{cats.map(c=><button key={c} className={cat===c?"on":""} onClick={()=>setCat(c)}>{c}</button>)}</div>
+    <div className="card">
+      {FOODS.filter(f=>cat==="All"||f.cat===cat).map((f,i)=>(
+        <div className="li" key={i}><div style={{flex:1}}><div className="t" style={{fontSize:14.5}}>{f.n}</div><div className="macro"><b>{f.pro}g</b> pro · {f.cal} cal · {f.c}c · {f.f}f</div></div>
+          <button className="btn xs gold" onClick={()=>addFood(ctx,{name:f.n,pro:f.pro,cal:f.cal,c:f.c,f:f.f})}>Add</button></div>))}
     </div>
-    <div class="ex-body">
-      <div class="ex-target">Target: ${esc(e.target)} · ${e.sets} sets</div>
-      ${e.note?`<div class="ex-note">${esc(e.note)}</div>`:''}
-      <div class="set-row head"><span>Set</span><span>Weight</span><span>Reps</span><span>vs</span></div>
-      <div id="sets-${idx}">${sets.map((st,si)=>setRow(idx,si,st,last)).join('')}</div>
-      <button class="btn-add" onclick="addSet(${idx})">+ Add set</button>
-      ${e.swap?`<div class="ex-swap">↻ ${esc(e.swap)}</div>`:''}
+    {showAdd&&<CustomFood onClose={()=>setShowAdd(false)} onAdd={(item)=>{addFood(ctx,item);setShowAdd(false);}}/>}
+  </>;
+}
+function CustomFood({onClose,onAdd}){
+  const [n,setN]=useState("");const [pro,setPro]=useState("");const [cal,setCal]=useState("");
+  return <Sheet onClose={onClose} title="Add Custom Food">
+    <span className="lbl">Food</span><input className="in" value={n} onChange={e=>setN(e.target.value)} placeholder="e.g. Protein bar"/>
+    <div className="grid2" style={{marginTop:12}}>
+      <div><span className="lbl">Protein (g)</span><input className="in" type="number" value={pro} onChange={e=>setPro(e.target.value)}/></div>
+      <div><span className="lbl">Calories</span><input className="in" type="number" value={cal} onChange={e=>setCal(e.target.value)}/></div>
     </div>
-  </div>`;
+    <button className="btn gold full" style={{marginTop:14}} disabled={!n.trim()} onClick={()=>onAdd({name:n.trim(),pro:Number(pro)||0,cal:Number(cal)||0,c:0,f:0})}>Add to Today</button>
+  </Sheet>;
 }
-function setRow(idx,si,s,last){
-  let vs='';
-  if(s.w!==''&&s.reps!==''&&last&&last.e1rm){const cur=epley(parseFloat(s.w),parseFloat(s.reps));vs=cur>last.e1rm?'<span class="vs up">▲</span>':cur<last.e1rm?'<span class="vs down">▼</span>':'<span class="vs same">=</span>';}
-  return `<div class="set-row">
-    <span class="set-label">${si+1}</span>
-    <input class="set-input" type="number" inputmode="decimal" placeholder="${last?last.w:'lbs'}" value="${s.w}" oninput="upd(${idx},${si},'w',this.value)">
-    <input class="set-input" type="number" inputmode="numeric" placeholder="${last?last.reps:'reps'}" value="${s.reps}" oninput="upd(${idx},${si},'reps',this.value)">
-    <span id="vs-${idx}-${si}">${vs}</span>
-  </div>`;
+function FuelMeals({ctx}){
+  return <>
+    {Object.keys(MEALS).map(slot=>(
+      <div key={slot}><p className="eyebrow" style={{marginTop:8}}>{slot}</p>
+        {MEALS[slot].map((m,i)=>(<div className="card" data-acc="ox" key={i}>
+          <div className="between"><h3 className="serif" style={{fontSize:19,margin:0}}>{m.n}</h3>
+            <div style={{textAlign:"right"}}><div style={{color:"var(--gold-soft)",fontWeight:700}}>{m.pro}g</div><div className="faint" style={{fontSize:12}}>{m.cal} cal</div></div></div>
+          <div className="muted" style={{fontSize:13,margin:"4px 0 8px"}}>{m.desc}</div>
+          <div className="row wrap" style={{gap:6}}>{m.ing.map((ig,j)=><span className="pill" key={j}>{ig}</span>)}</div>
+          <button className="btn sm full" style={{marginTop:12}} onClick={()=>addFood(ctx,{name:m.n,pro:m.pro,cal:m.cal,c:0,f:0})}>Log to today</button>
+        </div>))}
+      </div>))}
+    <p className="eyebrow" style={{marginTop:8}}>High-Protein Meal Prep</p>
+    {PREPS.map((m,i)=>(<div className="card" data-acc="brass" key={i}>
+      <div className="between"><h3 className="serif" style={{fontSize:19,margin:0}}>{m.n}</h3>
+        <div style={{textAlign:"right"}}><div style={{color:"var(--gold-soft)",fontWeight:700}}>{m.pro}g/serv</div><div className="faint" style={{fontSize:12}}>{m.cal} cal</div></div></div>
+      <div className="muted" style={{fontSize:13,margin:"4px 0 8px"}}>{m.desc}</div>
+      <div className="row wrap" style={{gap:6}}>{m.ing.map((ig,j)=><span className="pill" key={j}>{ig}</span>)}</div>
+      <button className="btn sm full" style={{marginTop:12}} onClick={()=>addFood(ctx,{name:m.n+" (1 serv)",pro:m.pro,cal:m.cal,c:0,f:0})}>Log a serving</button>
+    </div>))}
+  </>;
 }
-function toggleCard(idx){document.getElementById('card-'+idx).classList.toggle('open');}
-function curExs(){return findSplit(activeSplit).days[activeDay];}
-function upd(idx,si,field,val){
-  const exName=curExs()[idx].n;draft[exName][si][field]=val;
-  const last=lastPerf(exName);const s=draft[exName][si];const cell=document.getElementById(`vs-${idx}-${si}`);
-  if(cell){let vs='';if(s.w!==''&&s.reps!==''&&last&&last.e1rm){const cur=epley(parseFloat(s.w),parseFloat(s.reps));vs=cur>last.e1rm?'<span class="vs up">▲</span>':cur<last.e1rm?'<span class="vs down">▼</span>':'<span class="vs same">=</span>';}cell.innerHTML=vs;}
+function FuelSnacks({ctx}){
+  return <>
+    <p className="h-sub" style={{marginTop:0}}>Healthy snacks tagged by best timing. Tap to log.</p>
+    {SNACKS.map((s,i)=>(<div className="card" data-acc="ox" key={i}>
+      <div className="between"><h3 className="serif" style={{fontSize:18,margin:0}}>{s.n}</h3><span className="pill ox">{s.when}</span></div>
+      <div className="muted" style={{fontSize:13,margin:"4px 0 6px"}}>{s.note}</div>
+      <div className="between"><div className="macro"><b>{s.pro}g</b> pro · {s.cal} cal</div>
+        <button className="btn xs gold" onClick={()=>addFood(ctx,{name:s.n,pro:s.pro,cal:s.cal,c:0,f:0})}>Log</button></div>
+    </div>))}
+  </>;
 }
-function addSet(idx){const exName=curExs()[idx].n;draft[exName].push({w:'',reps:''});const last=lastPerf(exName);document.getElementById('sets-'+idx).innerHTML=draft[exName].map((s,si)=>setRow(idx,si,s,last)).join('');}
-
-function saveSession(){
-  const s=findSplit(activeSplit);const sets=[];
-  s.days[activeDay].forEach(e=>{(draft[e.n]||[]).forEach(st=>{if(st.w!==''||st.reps!==''){const w=parseFloat(st.w)||0,reps=parseFloat(st.reps)||0;if(reps>0)sets.push({ex:e.n,w,reps,e1rm:epley(w,reps)});}});});
-  if(!sets.length){toast('Nothing logged yet');return;}
-  let prs=0;sets.forEach(set=>{if(set.e1rm>0&&set.e1rm>bestE1RM(set.ex))prs++;});
-  const hist=getHistory();hist.push({date:todayISO(),split:activeSplit,day:activeDay,sets,ts:nowStamp()});setHistory(hist);
-  toast(prs>0?`Saved · ${prs} PR${prs>1?'s':''}! 🏆`:'Session saved ✓');
-  trainView='stats';refresh();window.scrollTo(0,0);
+function FuelAyur(){
+  const [open,setOpen]=useState(null);
+  return <>
+    <div className="note"><p className="muted" style={{fontSize:13.5,margin:0,lineHeight:1.6}}>{AYURVEDA.intro}</p></div>
+    {AYURVEDA.items.map((a,i)=>(<div className="card" data-acc="verd" key={i}>
+      <div className="between"><h3 className="serif" style={{fontSize:18,margin:0}}>{a.n}</h3><span className="pill verd">{a.when}</span></div>
+      <div className="muted" style={{fontSize:13.5,margin:"6px 0"}}>{a.what}</div>
+      {open===i?<>
+        <div className="note verd"><p className="eyebrow" style={{margin:"0 0 4px"}}>The Western read</p><p className="muted" style={{fontSize:13,margin:0}}>{a.west}</p></div>
+        <button className="btn xs" style={{marginTop:10}} onClick={()=>setOpen(null)}>Collapse</button>
+      </>:<button className="btn xs" onClick={()=>setOpen(i)}>Why it works</button>}
+    </div>))}
+    <div className="note warn"><p className="muted" style={{fontSize:12.5,margin:0}}>Complementary wellness, not medical advice. Clear any herb (ashwagandha, triphala, etc.) with your doctor — especially alongside medications or health conditions.</p></div>
+  </>;
 }
-
-function statsView(){
-  const hist=getHistory();
-  if(!hist.length)return `<div class="fade"><button class="back-link" onclick="trainView='picker';refresh();">‹ Back</button><div class="empty"><div class="big">📈</div><div style="font-size:17px;color:var(--textHi);font-weight:700;margin-bottom:6px">No stats yet</div><div>Log a session and your PRs, strength, and anti-skip counters appear here.</div></div></div>`;
-  let tonnage=0,setCount=0,prCount=0;const dates=new Set();let legSets=0,coreSets=0;const bestMap={};
-  const legRe=/squat|leg|calf|bulgarian|lunge/i,coreRe=/ab |oblique|russian|plank|woodchop|leg raise|l-sit|crunch/i;
-  const seen={};
-  hist.forEach(s=>{dates.add(s.date);s.sets.forEach(set=>{tonnage+=set.w*set.reps;setCount++;if(legRe.test(set.ex))legSets++;if(coreRe.test(set.ex))coreSets++;if(!bestMap[set.ex]||set.e1rm>bestMap[set.ex])bestMap[set.ex]=set.e1rm;if(set.e1rm>0){if(!seen[set.ex]||set.e1rm>seen[set.ex]){seen[set.ex]=set.e1rm;prCount++;}}});});
-  const lifts=Object.entries(bestMap).filter(([k,v])=>v>0).sort((a,b)=>b[1]-a[1]).slice(0,8);
-  const holds={};hist.forEach(s=>s.sets.forEach(set=>{if(/hold|l-sit|planche|support/i.test(set.ex)){if(!holds[set.ex]||set.reps>holds[set.ex])holds[set.ex]=set.reps;}}));
-  return `<div class="fade">
-    <button class="back-link" onclick="trainView='picker';refresh();">‹ Back to splits</button>
-    <div class="sec-title">Stats</div>
-    <div class="sec-sub">Your training by the numbers</div>
-    <div class="stat-grid">
-      <div class="stat"><div class="v" style="color:var(--greenBright)">${dates.size}</div><div class="l">Sessions</div></div>
-      <div class="stat"><div class="v" style="color:var(--gold)">${prCount}</div><div class="l">PRs Hit</div></div>
-      <div class="stat"><div class="v" style="color:var(--iron)">${Math.round(tonnage).toLocaleString()}</div><div class="l">Total Lbs</div></div>
-      <div class="stat"><div class="v" style="color:var(--iron)">${setCount}</div><div class="l">Total Sets</div></div>
-    </div>
-    <div class="sec-sub" style="margin:18px 0 10px;color:var(--ember);font-weight:700">⚠ ANTI-SKIP TRACKER</div>
-    <div class="stat-grid">
-      <div class="stat"><div class="v" style="color:var(--ember)">${legSets}</div><div class="l">Leg Sets</div></div>
-      <div class="stat"><div class="v" style="color:var(--ember)">${coreSets}</div><div class="l">Core Sets</div></div>
-    </div>
-    ${(legSets===0||coreSets===0)?`<div class="ex-swap" style="margin-bottom:16px">${legSets===0?'No leg work logged yet. ':''}${coreSets===0?'No core work logged yet. ':''}Keep the old habit from creeping back.</div>`:''}
-    ${lifts.length?`<div class="sec-sub" style="margin:18px 0 10px">💪 BEST e1RM PER LIFT</div>${lifts.map(([nm,v])=>`<div class="lift-row"><span class="nm">${esc(nm)}</span><span class="v">${v}<span class="u"> lb</span></span></div>`).join('')}`:''}
-    ${Object.keys(holds).length?`<div class="sec-sub" style="margin:18px 0 10px">🤸 BEST HOLDS</div>${Object.entries(holds).sort((a,b)=>b[1]-a[1]).map(([nm,v])=>`<div class="lift-row"><span class="nm">${esc(nm)}</span><span class="v" style="color:var(--violet)">${v}<span class="u"> sec</span></span></div>`).join('')}`:''}
-  </div>`;
+function Bio({ctx}){
+  const [time,setTime]=useState("All");const times=["All","Morning","Midday","Evening","Anytime"];
+  const list=BIOHACKS.filter(b=>time==="All"||b.time===time||(time==="Midday"&&b.time==="Anytime"));
+  const [open,setOpen]=useState(null);
+  return (
+   <div className="page">
+     <p className="eyebrow">Body · Protocols</p>
+     <h2 className="h-title">Bio-Hacks</h2>
+     <p className="h-sub">What it is, why it works, the cautions, and what it stacks with. Time them right and they compound.</p>
+     <div className="seg ox">{times.map(t=><button key={t} className={time===t?"on":""} onClick={()=>setTime(t)}>{t}</button>)}</div>
+     <div className="note"><p className="muted" style={{fontSize:13,margin:0}}><b style={{color:"var(--gold-soft)"}}>Sample morning stack:</b> sunlight → cold → breathwork → delayed caffeine + L-theanine. <b style={{color:"var(--gold-soft)"}}>Evening:</b> digital sunset → magnesium → golden milk → fixed wake time.</p></div>
+     {list.map(b=>(<div className="card" data-acc="ox" key={b.id}>
+       <div className="between"><h3 className="serif" style={{fontSize:20,margin:0}}>{b.n}</h3><div className="row" style={{gap:6}}><span className="pill ox">{b.time}</span><span className="pill brass">{b.ev}</span></div></div>
+       <div className="muted" style={{fontSize:13.5,margin:"6px 0"}}>{b.desc}</div>
+       {open===b.id?<>
+         <hr className="divider"/>
+         <p className="eyebrow" style={{margin:"0 0 6px"}}>Benefits</p>
+         <div className="row wrap" style={{gap:6}}>{b.benefits.map((x,i)=><span className="pill verd" key={i}>{x}</span>)}</div>
+         <div className="note warn" style={{marginTop:12}}><p className="muted" style={{fontSize:12.5,margin:0}}><b>Caution:</b> {b.caution}</p></div>
+         <p className="eyebrow" style={{margin:"12px 0 6px"}}>Stacks with</p>
+         <div className="row wrap" style={{gap:6}}>{b.stacks.map((x,i)=><span className="pill" key={i}>{x}</span>)}</div>
+         <div className="row" style={{marginTop:12}}>
+           <button className="btn sm gold full" onClick={()=>{ctx.addLog({type:"biohack",title:b.n+" done",body:b.desc});}}>Log done today</button>
+           <button className="btn sm" onClick={()=>setOpen(null)}>Close</button>
+         </div>
+       </>:<button className="btn xs" onClick={()=>setOpen(b.id)}>Details &amp; stack</button>}
+     </div>))}
+   </div>
+  );
 }
-</script>
-<script>
-// ============================================================
-// SPLIT BUILDER
-// ============================================================
-let buildDraft={name:'',emoji:'🛠',days:{}};
-function builderView(){
-  return `<div class="fade">
-    <button class="back-link" onclick="trainView='picker';refresh();">‹ Cancel</button>
-    <div class="sec-title">Build a Split</div>
-    <div class="sec-sub">Name it, add days, add exercises. Saves to your splits.</div>
-    <label class="field-l">Split Name</label>
-    <input type="text" id="bName" placeholder="e.g. My Summer Cut" value="${esc(buildDraft.name)}" oninput="buildDraft.name=this.value">
-    <label class="field-l">Days</label>
-    <div id="buildDays">${renderBuildDays()}</div>
-    <button class="btn-add" style="margin-top:10px" onclick="addBuildDay()">+ Add a day</button>
-    <button class="btn btn-teal btn-full" style="margin-top:16px" onclick="saveBuild()">Save Split</button>
-  </div>`;
+function Practice({ctx}){
+  const [sub,setSub]=useState("explore");
+  const [trad,setTrad]=useState(TRADITIONS[0].id);
+  const [sheet,setSheet]=useState(null);
+  const tobj=TRADITIONS.find(t=>t.id===trad);
+  const list=PRACTICES.filter(p=>p.trad===tobj.n);
+  const inFw=(id)=>ctx.framework.includes(id);
+  function toggleFw(id){ctx.setFramework(f=>f.includes(id)?f.filter(x=>x!==id):[...f,id]);}
+  return (
+   <div className="page">
+     <p className="eyebrow">Spirit · The Work</p>
+     <h2 className="h-title">Practice</h2>
+     <p className="h-sub">Explore traditions, learn their context, then pull the practices that resonate into your own framework. Banishing before invoking — consistency before intensity.</p>
+     <div className="seg verd">
+       <button className={sub==="explore"?"on":""} onClick={()=>setSub("explore")}>Explore Traditions</button>
+       <button className={sub==="framework"?"on":""} onClick={()=>setSub("framework")}>My Framework ({ctx.framework.length})</button>
+     </div>
+     {sub==="explore"&&<>
+       <div className="seg verd">{TRADITIONS.map(t=><button key={t.id} className={trad===t.id?"on":""} onClick={()=>setTrad(t.id)}>{t.n}</button>)}</div>
+       <div className="card" data-acc="brass">
+         <h3 className="serif" style={{fontSize:22,margin:"0 0 6px"}}>{tobj.n}</h3>
+         <p className="muted" style={{fontSize:13.5,lineHeight:1.6,margin:0}}>{tobj.intro}</p>
+         {tobj.respect&&<div className="note warn" style={{marginTop:12}}><p className="eyebrow" style={{margin:"0 0 4px"}}>Approach with respect</p><p className="muted" style={{fontSize:12.5,margin:0}}>{tobj.respect}</p></div>}
+         <p className="eyebrow" style={{margin:"14px 0 6px"}}>Learn / Read</p>
+         {tobj.learn.map((l,i)=><div className="step" key={i}><div className="n">{i+1}</div><div className="x">{l}</div></div>)}
+       </div>
+       {list.length>0?<p className="eyebrow" style={{marginTop:8}}>Practices</p>
+         :<p className="muted center" style={{fontSize:13}}>This tradition is here for study and respect — explore the readings above rather than a step-by-step ritual.</p>}
+       {list.map(p=>(<div className="card" data-acc="verd" key={p.id}>
+         <div className="between"><div><h3 className="serif" style={{fontSize:19,margin:0}}>{p.n}</h3><div className="faint" style={{fontSize:12}}>{p.dur}</div></div>
+           <button className={"btn xs "+(inFw(p.id)?"verd":"")} onClick={()=>toggleFw(p.id)}>{inFw(p.id)?"✓ In framework":"+ Add"}</button></div>
+         <div className="muted" style={{fontSize:13,margin:"6px 0"}}>{p.purpose}</div>
+         <button className="btn sm full" onClick={()=>setSheet(p)}>Open &amp; Begin</button>
+       </div>))}
+     </>}
+     {sub==="framework"&&<>
+       {ctx.framework.length===0?<div className="empty"><div className="big">☿</div>Your framework is empty.<br/>Explore traditions and add the practices that resonate.</div>
+        :ctx.framework.map(id=>{const p=pracById(id);if(!p)return null;return (
+          <div className="card" data-acc="verd" key={id}>
+            <div className="between"><div><h3 className="serif" style={{fontSize:19,margin:0}}>{p.n}</h3><div className="faint" style={{fontSize:12}}>{p.trad} · {p.dur}</div></div>
+              <button className="btn xs ghost danger" onClick={()=>toggleFw(id)}>Remove</button></div>
+            <div className="muted" style={{fontSize:13,margin:"6px 0"}}>{p.purpose}</div>
+            <button className="btn sm gold full" onClick={()=>setSheet(p)}>Begin</button>
+          </div>);})}
+     </>}
+     {sheet&&<Sheet onClose={()=>setSheet(null)} title={sheet.n}>
+       <div className="faint" style={{fontSize:12,marginBottom:4}}>{sheet.trad} · {sheet.dur}</div>
+       <p className="muted" style={{fontSize:14,marginTop:0}}>{sheet.purpose}</p>
+       {sheet.steps.map((s,i)=><div className="step" key={i}><div className="n">{i+1}</div><div className="x">{s}</div></div>)}
+       {sheet.note&&<div className="note verd"><p className="muted" style={{fontSize:13,margin:0}}><b>Note:</b> {sheet.note}</p></div>}
+       <div className="row" style={{marginTop:14}}>
+         <button className="btn gold full" onClick={()=>{ctx.addLog({type:"practice",title:sheet.n,body:sheet.purpose});setSheet(null);}}>Complete &amp; Log</button>
+         {!ctx.framework.includes(sheet.id)&&<button className="btn" onClick={()=>toggleFw(sheet.id)}>+ Framework</button>}
+       </div>
+     </Sheet>}
+   </div>
+  );
 }
-function renderBuildDays(){
-  const keys=Object.keys(buildDraft.days);
-  if(!keys.length)return `<div style="color:var(--muted);font-size:13px;font-style:italic;padding:8px 0">No days yet. Add one below.</div>`;
-  return keys.map((dn,di)=>`<div class="card" style="margin-bottom:10px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <input type="text" value="${esc(dn)}" onchange="renameBuildDay('${dn.replace(/'/g,"\\'")}',this.value)" style="font-weight:700;font-size:15px;padding:8px;flex:1">
-      <button class="icon-btn" style="margin-left:8px" onclick="delBuildDay('${dn.replace(/'/g,"\\'")}')">✕</button>
-    </div>
-    ${buildDraft.days[dn].map((e,ei)=>`<div style="display:flex;gap:6px;margin-bottom:6px;align-items:center">
-      <input type="text" value="${esc(e.n)}" placeholder="Exercise" onchange="updBuildEx('${dn.replace(/'/g,"\\'")}',${ei},'n',this.value)" style="flex:2;padding:9px;font-size:13px">
-      <input type="text" value="${esc(e.target)}" placeholder="reps" onchange="updBuildEx('${dn.replace(/'/g,"\\'")}',${ei},'target',this.value)" style="flex:1;padding:9px;font-size:13px">
-      <button class="icon-btn" onclick="delBuildEx('${dn.replace(/'/g,"\\'")}',${ei})">✕</button>
-    </div>`).join('')}
-    <button class="btn-add" style="margin-top:4px" onclick="addBuildEx('${dn.replace(/'/g,"\\'")}')">+ exercise</button>
-  </div>`).join('');
+function Mind({ctx}){
+  const [lens,setLens]=useState("Jungian");
+  const [open,setOpen]=useState(null);
+  const [sheet,setSheet]=useState(null);
+  const list=MIND.filter(m=>m.lens===lens);
+  return (
+   <div className="page">
+     <p className="eyebrow">Mind · The Bridge</p>
+     <h2 className="h-title">Mind</h2>
+     <p className="h-sub">Six lenses on the same psyche — Jung, IFS, Stoicism, Wilson's circuits, Hermetics, Eastern. Each entry: what it is, an exercise to run, and a prompt to reflect on.</p>
+     <div className="seg verd">{LENSES.map(l=><button key={l} className={lens===l?"on":""} onClick={()=>setLens(l)}>{l}</button>)}</div>
+     {list.map(m=>(<div className="card" data-acc="verd" key={m.id}>
+       <h3 className="serif" style={{fontSize:21,margin:"0 0 6px"}}>{m.n}</h3>
+       <p className="muted" style={{fontSize:13.5,lineHeight:1.65,margin:0}}>{m.body}</p>
+       {open===m.id?<>
+         <div className="note verd"><p className="eyebrow" style={{margin:"0 0 4px"}}>The exercise</p><p className="muted" style={{fontSize:13.5,margin:0}}>{m.practice}</p></div>
+         <div className="note"><p className="eyebrow" style={{margin:"0 0 4px"}}>Reflect on</p><p className="serif" style={{fontSize:17,fontStyle:"italic",margin:0,color:"var(--parch)"}}>{m.prompt}</p></div>
+         <div className="row" style={{marginTop:12}}>
+           <button className="btn sm gold full" onClick={()=>setSheet(m)}>Reflect &amp; log</button>
+           <button className="btn sm" onClick={()=>setOpen(null)}>Close</button>
+         </div>
+       </>:<button className="btn xs" style={{marginTop:10}} onClick={()=>setOpen(m.id)}>Exercise &amp; prompt</button>}
+     </div>))}
+     {sheet&&<Sheet onClose={()=>setSheet(null)} title={sheet.n}>
+       <p className="muted" style={{fontSize:13.5,marginTop:0}}>{sheet.practice}</p>
+       <div className="note"><p className="serif" style={{fontSize:18,fontStyle:"italic",margin:0,color:"var(--parch)"}}>{sheet.prompt}</p></div>
+       <span className="lbl" style={{marginTop:14}}>Your reflection</span>
+       <ReflectBox onSave={(text)=>{ctx.addLog({type:"mind",title:sheet.n+" — "+sheet.lens,body:text});setSheet(null);}}/>
+     </Sheet>}
+   </div>
+  );
 }
-function refreshBuild(){document.getElementById('buildDays').innerHTML=renderBuildDays();}
-function addBuildDay(){let n=1;while(buildDraft.days['Day '+n])n++;buildDraft.days['Day '+n]=[{n:'',sets:3,target:'',note:'',sh:false,swap:''}];refreshBuild();}
-function renameBuildDay(oldN,newN){if(!newN||newN===oldN)return;const d=buildDraft.days;const entries=Object.entries(d);buildDraft.days={};entries.forEach(([k,v])=>{buildDraft.days[k===oldN?newN:k]=v;});refreshBuild();}
-function delBuildDay(dn){delete buildDraft.days[dn];refreshBuild();}
-function addBuildEx(dn){buildDraft.days[dn].push({n:'',sets:3,target:'',note:'',sh:false,swap:''});refreshBuild();}
-function updBuildEx(dn,ei,f,v){buildDraft.days[dn][ei][f]=v;}
-function delBuildEx(dn,ei){buildDraft.days[dn].splice(ei,1);refreshBuild();}
-function saveBuild(){
-  if(!buildDraft.name.trim()){toast('Name your split');return;}
-  const keys=Object.keys(buildDraft.days);
-  if(!keys.length){toast('Add at least one day');return;}
-  // clean empties
-  const days={};keys.forEach(dn=>{const exs=buildDraft.days[dn].filter(e=>e.n.trim());if(exs.length)days[dn]=exs.map(e=>({...e,sets:e.sets||3}));});
-  if(!Object.keys(days).length){toast('Add some exercises');return;}
-  const custom=getCustomSplits();
-  custom.push({id:'custom_'+Date.now(),name:buildDraft.name.trim(),emoji:'🛠',color:'var(--teal)',tag:'CUSTOM',desc:'Your custom split',days});
-  DB.set('customSplits',custom);
-  buildDraft={name:'',emoji:'🛠',days:{}};
-  toast('Split saved');trainView='picker';refresh();
+function ReflectBox({onSave}){
+  const [text,setText]=useState("");
+  return <>
+    <textarea className="in" value={text} onChange={e=>setText(e.target.value)} placeholder="Write what came up…"/>
+    <button className="btn gold full" style={{marginTop:12}} disabled={!text.trim()} onClick={()=>onSave(text.trim())}>Save to Journal</button>
+  </>;
 }
-function delCustom(id){if(confirm('Delete this split? Logged history stays.')){DB.set('customSplits',getCustomSplits().filter(s=>s.id!==id));refresh();toast('Split deleted');}}
-</script>
-<script>
-// ============================================================
-// FUEL PILLAR
-// ============================================================
-function fuelPanel(){
-  const d=todayISO();const food=getFoodDay(d);const t=getTargets();
-  const sum=food.reduce((a,x)=>({c:a.c+(x.c||0),p:a.p+(x.p||0),cb:a.cb+(x.cb||0),f:a.f+(x.f||0)}),{c:0,p:0,cb:0,f:0});
-  const macro=(nm,cur,tot,col)=>`<div class="macro-bar"><div class="top-l"><span class="nm">${nm}</span><span class="v">${Math.round(cur)} / ${tot}${nm==='Calories'?'':'g'}</span></div><div class="track"><div class="fill" style="width:${Math.min(100,tot?cur/tot*100:0)}%;background:${col}"></div></div></div>`;
-  return `<div class="fade">
-    <div class="sec-title">Fuel</div>
-    <div class="sec-sub">${prettyDate(d)} · Tap a food to log it</div>
-    <div class="card">
-      <div class="accent" style="background:var(--teal)"></div>
-      ${macro('Calories',sum.c,t.calories,'var(--teal)')}
-      ${macro('Protein',sum.p,t.protein,'var(--rose)')}
-      ${macro('Carbs',sum.cb,t.carbs,'var(--gold)')}
-      ${macro('Fat',sum.f,t.fat,'var(--ember)')}
-      <button class="btn-add" style="margin-top:6px" onclick="editTargets()">Edit targets</button>
-    </div>
-
-    <div class="sec-sub" style="margin:6px 0 10px">QUICK ADD</div>
-    <div class="pill-row">
-      ${COMMON_FOODS.map((f,i)=>`<span class="pill" onclick="addFood(${i})">${esc(f.n.split(' (')[0])} +</span>`).join('')}
-    </div>
-    <button class="btn btn-ghost btn-full" style="margin-bottom:16px" onclick="customFood()">+ Custom food</button>
-
-    ${food.length?`<div class="sec-sub" style="margin:6px 0 10px">TODAY'S LOG · ${food.length} items</div>
-      ${food.map((f,i)=>`<div class="lift-row"><span class="nm">${esc(f.n)}</span><span style="display:flex;align-items:center;gap:10px"><span style="font-size:12px;color:var(--muted)">${f.c}c · ${f.p}p</span><button class="icon-btn" style="width:30px;height:30px;font-size:14px" onclick="rmFood(${i})">✕</button></span></div>`).join('')}`
-      :`<div class="empty" style="padding:24px"><div>Nothing logged today. Tap a quick-add above.</div></div>`}
-  </div>`;
+function Journal({ctx}){
+  const [filter,setFilter]=useState("all");
+  const [compose,setCompose]=useState(false);
+  const [detail,setDetail]=useState(null);
+  const types=[["all","All"],["practice","Practice"],["mind","Mind"],["workout","Train"],["meal","Fuel"],["biohack","Hacks"],["quiz","Test"],["free","Notes"]];
+  const list=ctx.log.filter(e=>filter==="all"||e.type===filter);
+  const groups=list.reduce((a,e)=>{const d=e.ts.slice(0,10);(a[d]=a[d]||[]).push(e);return a;},{});
+  return (
+   <div className="page">
+     <p className="eyebrow">The Record</p>
+     <h2 className="h-title">Journal</h2>
+     <p className="h-sub">The instrument that makes consistency and honesty visible. Everything you log lands here — your real record, not the story you tell yourself.</p>
+     <button className="btn gold full" onClick={()=>setCompose(true)}>＋ New Entry</button>
+     <div className="seg" style={{marginTop:12}}>{types.map(([k,l])=><button key={k} className={filter===k?"on":""} onClick={()=>setFilter(k)}>{l}</button>)}</div>
+     {list.length===0?<div className="empty"><div className="big">📖</div>No entries yet.<br/>Your practice begins with the first line.</div>
+      :Object.keys(groups).sort().reverse().map(d=>(
+       <div key={d}><p className="eyebrow" style={{marginTop:16}}>{fmtDate(d)}</p>
+         <div className="card">{groups[d].map(e=>(
+           <div className="li" key={e.id} onClick={()=>setDetail(e)} style={{cursor:"pointer"}}>
+             <div style={{flex:1}}><div className="t">{e.title}</div><div className="d">{fmtTime(e.ts)}{e.body?" · "+e.body.slice(0,52)+(e.body.length>52?"…":""):""}</div></div>
+             <TypeTag t={e.type}/>
+           </div>))}</div>
+       </div>))}
+     {compose&&<Sheet onClose={()=>setCompose(false)} title="New Journal Entry">
+       <ComposeBox onSave={(title,body)=>{ctx.addLog({type:"free",title,body});setCompose(false);}}/>
+     </Sheet>}
+     {detail&&<Sheet onClose={()=>setDetail(null)} title={detail.title}>
+       <div className="faint" style={{fontSize:12,marginBottom:8}}>{fmtDate(detail.ts)} · {fmtTime(detail.ts)} · <TypeTag t={detail.type}/></div>
+       <p className="muted" style={{fontSize:14.5,lineHeight:1.7,whiteSpace:"pre-wrap"}}>{detail.body||"—"}</p>
+       <button className="btn ghost danger full" style={{marginTop:14}} onClick={()=>{ctx.setLog(l=>l.filter(x=>x.id!==detail.id));setDetail(null);ctx.ping("Entry deleted");}}>Delete entry</button>
+     </Sheet>}
+   </div>
+  );
 }
-function addFood(i){const d=todayISO();const food=getFoodDay(d);food.push({...COMMON_FOODS[i]});setFoodDay(d,food);refresh();toast('Added');}
-function rmFood(i){const d=todayISO();const food=getFoodDay(d);food.splice(i,1);setFoodDay(d,food);refresh();}
-function editTargets(){
-  const t=getTargets();
-  sheet(`<h2>Daily Targets</h2><p>Set your macro goals. Defaults are your 175lb / 3100 cal / 175g protein numbers.</p>
-    <label class="field-l">Calories</label><input type="number" id="tc" value="${t.calories}">
-    <label class="field-l">Protein (g)</label><input type="number" id="tp" value="${t.protein}">
-    <label class="field-l">Carbs (g)</label><input type="number" id="tcb" value="${t.carbs}">
-    <label class="field-l">Fat (g)</label><input type="number" id="tf" value="${t.fat}">
-    <button class="btn btn-teal btn-full" style="margin-top:16px" onclick="saveTargets()">Save</button>`);
+function ComposeBox({onSave}){
+  const [title,setTitle]=useState("");const [body,setBody]=useState("");
+  return <>
+    <span className="lbl">Title</span><input className="in" value={title} onChange={e=>setTitle(e.target.value)} placeholder="What's this about?"/>
+    <span className="lbl" style={{marginTop:12}}>Entry</span>
+    <textarea className="in" value={body} onChange={e=>setBody(e.target.value)} placeholder="Be honest. The record only works if it's true."/>
+    <button className="btn gold full" style={{marginTop:12}} disabled={!title.trim()} onClick={()=>onSave(title.trim(),body.trim())}>Save Entry</button>
+  </>;
 }
-function saveTargets(){DB.set('targets',{calories:+document.getElementById('tc').value||3100,protein:+document.getElementById('tp').value||175,carbs:+document.getElementById('tcb').value||340,fat:+document.getElementById('tf').value||80});closeSheet();refresh();toast('Targets saved');}
-function customFood(){
-  sheet(`<h2>Custom Food</h2>
-    <label class="field-l">Name</label><input type="text" id="fn" placeholder="e.g. Chipotle bowl">
-    <label class="field-l">Calories</label><input type="number" id="fc" placeholder="0">
-    <label class="field-l">Protein (g)</label><input type="number" id="fp" placeholder="0">
-    <label class="field-l">Carbs (g)</label><input type="number" id="fcb" placeholder="0">
-    <label class="field-l">Fat (g)</label><input type="number" id="ff" placeholder="0">
-    <button class="btn btn-teal btn-full" style="margin-top:16px" onclick="saveCustomFood()">Add to today</button>`);
+function Test({ctx}){
+  const [domain,setDomain]=useState(null);
+  const [qi,setQi]=useState(0);const [picked,setPicked]=useState(null);const [score,setScore]=useState(0);const [done,setDone]=useState(false);
+  const domains=Object.keys(QUIZZES);
+  function start(d){setDomain(d);setQi(0);setPicked(null);setScore(0);setDone(false);}
+  function pick(i){
+    if(picked!=null)return;setPicked(i);
+    const correct=QUIZZES[domain][qi].c===i;if(correct)setScore(s=>s+1);
+    setTimeout(()=>{
+      if(qi+1<QUIZZES[domain].length){setQi(qi+1);setPicked(null);}
+      else{setDone(true);const final=score+(correct?1:0);const best=ctx.scores[domain]||0;
+        if(final>best)ctx.setScores(s=>({...s,[domain]:final}));
+        ctx.addLog({type:"quiz",title:domain+" quiz",body:"Scored "+final+"/"+QUIZZES[domain].length});}
+    },900);
+  }
+  if(!domain) return (
+   <div className="page">
+     <p className="eyebrow">Mind · Sharpen</p>
+     <h2 className="h-title">Test</h2>
+     <p className="h-sub">Knowledge isn't your gap — but recall keeps the framework live. Quick quizzes across body and spirit.</p>
+     {domains.map(d=>(<div className="card" data-acc="verd" key={d}>
+       <div className="between"><div><h3 className="serif" style={{fontSize:19,margin:0}}>{d}</h3><div className="faint" style={{fontSize:12}}>{QUIZZES[d].length} questions{ctx.scores[d]!=null?" · best "+ctx.scores[d]+"/"+QUIZZES[d].length:""}</div></div>
+         <button className="btn sm gold" onClick={()=>start(d)}>Start</button></div>
+     </div>))}
+   </div>
+  );
+  if(done){const final=score;const total=QUIZZES[domain].length;return (
+   <div className="page">
+     <div className="card center" data-acc="brass" style={{paddingTop:30,paddingBottom:30}}>
+       <p className="eyebrow">{domain}</p>
+       <div className="kpi" style={{fontSize:56}}>{final}/{total}</div>
+       <p className="muted" style={{marginTop:8}}>{final===total?"Mastery. The work shows.":final>=total*0.6?"Solid. Keep it live.":"Worth a revisit — go back to the source."}</p>
+       <div className="row" style={{marginTop:16,justifyContent:"center"}}>
+         <button className="btn gold" onClick={()=>start(domain)}>Retry</button>
+         <button className="btn" onClick={()=>setDomain(null)}>All quizzes</button>
+       </div>
+     </div>
+   </div>
+  );}
+  const q=QUIZZES[domain][qi];
+  return (
+   <div className="page">
+     <button className="btn ghost sm" onClick={()=>setDomain(null)}>← Exit</button>
+     <div className="between" style={{margin:"14px 0"}}><span className="faint" style={{fontSize:12,letterSpacing:1}}>{domain.toUpperCase()}</span><span className="faint" style={{fontSize:12}}>{qi+1} / {QUIZZES[domain].length}</span></div>
+     <div className="bar verd" style={{marginBottom:18}}><i style={{width:((qi)/QUIZZES[domain].length*100)+"%"}}/></div>
+     <h3 className="serif" style={{fontSize:23,lineHeight:1.25,marginBottom:18}}>{q.q}</h3>
+     {q.a.map((opt,i)=>{let cls="opt";if(picked!=null){if(i===q.c)cls+=" correct";else if(i===picked)cls+=" wrong";}
+       return <button key={i} className={cls} onClick={()=>pick(i)}>{opt}</button>;})}
+   </div>
+  );
 }
-function saveCustomFood(){const n=document.getElementById('fn').value.trim();if(!n){toast('Name it');return;}const d=todayISO();const food=getFoodDay(d);food.push({n,c:+document.getElementById('fc').value||0,p:+document.getElementById('fp').value||0,cb:+document.getElementById('fcb').value||0,f:+document.getElementById('ff').value||0});setFoodDay(d,food);closeSheet();refresh();toast('Added');}
-</script>
-<script>
-// ============================================================
-// BIOHACK PILLAR
-// ============================================================
-function biohackPanel(){
-  const d=todayISO();const checks=getChecks(d);
-  return `<div class="fade">
-    <div class="sec-title">Biohack</div>
-    <div class="sec-sub">${prettyDate(d)} · Tap to check off · ${checks.length}/${BIOHACKS.length} done</div>
-    ${BIOHACKS.map(b=>{
-      const done=checks.includes(b.id);const streak=bhStreak(b.id);
-      return `<div class="check-row ${done?'done':''}" onclick="toggleBH('${b.id}')">
-        <div class="check-box">${done?'✓':''}</div>
-        <span class="emoji">${b.emoji}</span>
-        <div class="ct">${esc(b.name)}${streak>0?` <span style="color:var(--gold);font-size:12px">🔥${streak}</span>`:''}</div>
-        <button class="icon-btn" style="width:32px;height:32px;font-size:14px" onclick="event.stopPropagation();bhInfo('${b.id}')">ⓘ</button>
-      </div>`;
-    }).join('')}
-    <div class="sec-sub" style="margin-top:18px;text-align:center">Tap ⓘ on any protocol for the what, how, and when</div>
-  </div>`;
+function Sheet({title,children,onClose}){
+  return (
+   <div className="scrim" onClick={onClose}>
+     <div className="sheet" onClick={e=>e.stopPropagation()}>
+       <div className="grab"/>
+       <div className="between" style={{marginBottom:12}}>
+         <h3 className="serif" style={{fontSize:23,margin:0}}>{title}</h3>
+         <button className="btn sm ghost" onClick={onClose}>✕</button>
+       </div>
+       {children}
+     </div>
+   </div>
+  );
 }
-function toggleBH(id){const d=todayISO();const c=getChecks(d);const i=c.indexOf(id);if(i>=0)c.splice(i,1);else c.push(id);setChecks(d,c);refresh();}
-function bhInfo(id){
-  const b=BIOHACKS.find(x=>x.id===id);
-  sheet(`<h2>${b.emoji} ${esc(b.name)}</h2>
-    <label class="field-l">What it does</label><p>${esc(b.what)}</p>
-    <label class="field-l">How to do it</label><p>${esc(b.how)}</p>
-    <label class="field-l">When</label><p>${esc(b.when)}</p>`);
-}
-</script>
-<script>
-// ============================================================
-// BODY PILLAR
-// ============================================================
-function bodyPanel(){
-  const body=getBody();const rev=[...body].reverse();
-  const latest=body.length?body[body.length-1]:null;
-  return `<div class="fade">
-    <div class="sec-title">Body</div>
-    <div class="sec-sub">Weight, sleep, measurements & notes over time</div>
-    <button class="btn btn-violet btn-full" style="background:linear-gradient(135deg,#7d5fc4,var(--violet));color:#0f0a1a;margin-bottom:16px" onclick="logBody()">+ Log Today's Metrics</button>
-    ${latest?`<div class="stat-grid">
-      <div class="stat"><div class="v" style="color:var(--violet)">${latest.weight||'—'}</div><div class="l">Weight (lb)</div></div>
-      <div class="stat"><div class="v" style="color:var(--teal)">${latest.sleep||'—'}</div><div class="l">Sleep (hr)</div></div>
-    </div>`:''}
-    ${rev.length?`<div class="sec-sub" style="margin:6px 0 10px">HISTORY</div>
-      ${rev.map((b,i)=>`<div class="card" style="padding:14px 16px">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div style="font-size:12px;color:var(--violet);font-weight:700">${prettyDate(b.date)}</div>
-          <button class="icon-btn" style="width:28px;height:28px;font-size:13px" onclick="rmBody(${body.length-1-i})">✕</button>
-        </div>
-        <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:13px">
-          ${b.weight?`<span style="color:var(--textHi)">⚖ ${b.weight}lb</span>`:''}
-          ${b.sleep?`<span style="color:var(--textHi)">😴 ${b.sleep}h</span>`:''}
-          ${b.energy?`<span style="color:var(--textHi)">⚡ ${b.energy}/10</span>`:''}
-          ${b.waist?`<span style="color:var(--muted)">waist ${b.waist}"</span>`:''}
-          ${b.arms?`<span style="color:var(--muted)">arms ${b.arms}"</span>`:''}
-          ${b.chest?`<span style="color:var(--muted)">chest ${b.chest}"</span>`:''}
-          ${b.thigh?`<span style="color:var(--muted)">thigh ${b.thigh}"</span>`:''}
-        </div>
-        ${b.notes?`<div style="font-size:13px;color:var(--text);font-style:italic;margin-top:8px;line-height:1.5">${esc(b.notes)}</div>`:''}
-      </div>`).join('')}`
-      :`<div class="empty"><div class="big">📊</div><div>No entries yet. Log your weight, sleep, and measurements to track trends.</div></div>`}
-  </div>`;
-}
-function logBody(){
-  sheet(`<h2>Log Metrics</h2><p>Fill what you want — all optional. Track weekly for meaningful trends.</p>
-    <label class="field-l">Weight (lb)</label><input type="number" id="bw" placeholder="175">
-    <label class="field-l">Sleep last night (hr)</label><input type="number" id="bs" placeholder="7.5">
-    <label class="field-l">Energy (1-10)</label><input type="number" id="be" placeholder="8">
-    <div style="display:flex;gap:8px">
-      <div style="flex:1"><label class="field-l">Waist "</label><input type="number" id="bwa"></div>
-      <div style="flex:1"><label class="field-l">Arms "</label><input type="number" id="bar"></div>
-    </div>
-    <div style="display:flex;gap:8px">
-      <div style="flex:1"><label class="field-l">Chest "</label><input type="number" id="bch"></div>
-      <div style="flex:1"><label class="field-l">Thigh "</label><input type="number" id="bth"></div>
-    </div>
-    <label class="field-l">Notes (bloodwork, how you feel, etc.)</label><textarea id="bn" rows="2" placeholder="Optional"></textarea>
-    <button class="btn btn-teal btn-full" style="margin-top:16px" onclick="saveBody()">Save</button>`);
-}
-function saveBody(){
-  const e={date:todayISO(),weight:+document.getElementById('bw').value||null,sleep:+document.getElementById('bs').value||null,energy:+document.getElementById('be').value||null,waist:+document.getElementById('bwa').value||null,arms:+document.getElementById('bar').value||null,chest:+document.getElementById('bch').value||null,thigh:+document.getElementById('bth').value||null,notes:document.getElementById('bn').value.trim()};
-  if(!e.weight&&!e.sleep&&!e.energy&&!e.waist&&!e.notes){toast('Enter something');return;}
-  const body=getBody();const idx=body.findIndex(x=>x.date===e.date);if(idx>=0)body[idx]=e;else body.push(e);setBody(body);closeSheet();refresh();toast('Logged');
-}
-function rmBody(idx){const body=getBody();body.splice(idx,1);setBody(body);refresh();}
-</script>
-<script>
-// ============================================================
-// SHEET MODAL + DATA MGMT
-// ============================================================
-function sheet(html){const o=document.createElement('div');o.className='overlay';o.id='activeSheet';o.onclick=(e)=>{if(e.target===o)o.remove();};o.innerHTML=`<div class="sheet"><div class="grab"></div>${html}</div>`;document.body.appendChild(o);}
-function closeSheet(){document.getElementById('activeSheet')?.remove();}
-
-function openData(){
-  const hist=getHistory();
-  sheet(`<h2>Data & Backup</h2>
-    <p>Everything lives on this device. Back up here, or set up Google Sheets sync (in the guide) to go cross-device.</p>
-    <button class="btn btn-teal btn-full" style="margin-bottom:10px" onclick="exportData()">⬇ Export Backup</button>
-    <button class="btn btn-ghost btn-full" style="margin-bottom:10px" onclick="document.getElementById('impFile').click()">⬆ Import Backup</button>
-    <input type="file" id="impFile" accept=".json" style="display:none" onchange="importData(this)">
-    <label class="field-l">Sessions logged</label><p style="margin:0">${hist.length} workouts on this device</p>
-    <label class="field-l" style="margin-top:18px">Danger Zone</label>
-    <button class="btn btn-ghost btn-full" style="color:var(--red);border-color:var(--redDim)" onclick="wipeAll()">Erase all data</button>`);
-}
-function exportData(){
-  const data={app:'Vital',version:1,exported:new Date().toISOString(),history:getHistory(),customSplits:getCustomSplits(),targets:getTargets(),body:getBody()};
-  // include food + biohack days
-  const food={},bh={};for(let k in localStorage){if(k.startsWith('vital_food_'))food[k]=localStorage[k];if(k.startsWith('vital_bh_'))bh[k]=localStorage[k];}
-  data.food=food;data.biohack=bh;
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='vital-backup-'+todayISO()+'.json';a.click();URL.revokeObjectURL(url);toast('Backup exported');
-}
-function importData(input){
-  const file=input.files[0];if(!file)return;const reader=new FileReader();
-  reader.onload=(e)=>{try{const data=JSON.parse(e.target.result);if(!data.history&&!data.app){toast('Not a Vital backup');return;}
-    if(confirm('Import this backup? Replaces current data.')){
-      if(data.history)setHistory(data.history);if(data.customSplits)DB.set('customSplits',data.customSplits);if(data.targets)DB.set('targets',data.targets);if(data.body)setBody(data.body);
-      if(data.food)for(let k in data.food)localStorage[k]=data.food[k];
-      if(data.biohack)for(let k in data.biohack)localStorage[k]=data.biohack[k];
-      closeSheet();render();toast('Data imported');
-    }}catch{toast('Could not read file');}};
-  reader.readAsText(file);
-}
-function wipeAll(){if(confirm('Erase ALL data permanently? Export a backup first.')){if(confirm('Really sure? Cannot be undone.')){for(let k in localStorage)if(k.startsWith('vital_'))localStorage.removeItem(k);render();toast('All data erased');}}}
-
-// BOOT
-render();
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
 </html>
